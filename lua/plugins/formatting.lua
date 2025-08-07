@@ -22,6 +22,9 @@ return {
         stdin = false,
         tmpfile_format = '.cs',
       },
+      prettierd = {
+        args = { '--stdin-filepath', '$FILENAME', '--semi', '--single-quote', '--trailing-comma=es5' },
+      },
     },
     format_on_save = function(bufnr)
       local disable_filetypes = { c = true, cpp = true }
@@ -38,6 +41,13 @@ return {
     end,
     formatters_by_ft = {
       lua = { 'stylua' },
+      javascript = { 'prettierd' },
+      javascriptreact = { 'prettierd' },
+      typescript = { 'prettierd' },
+      typescriptreact = { 'prettierd' },
+      json = { 'prettierd' },
+      css = { 'prettierd' },
+      html = { 'prettierd' },
       --  cs = { 'csharpier' },
     },
   },
