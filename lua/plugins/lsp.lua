@@ -102,6 +102,15 @@ return {
             },
           },
         },
+        svelte = {
+          capabilities = vim.tbl_deep_extend('force', {}, capabilities, {
+            workspace = { didChangeWatchedFiles = false }
+          }),
+          filetypes = { 'svelte' },
+        },
+        tailwindcss = {
+          filetypes = { 'html', 'css', 'scss', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'svelte' },
+        },
       }
 
       require('mason').setup()
@@ -110,6 +119,7 @@ return {
       vim.list_extend(ensure_installed, {
         'stylua',
         'csharpier',
+        'svelte-language-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 

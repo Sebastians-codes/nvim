@@ -37,7 +37,7 @@ vim.opt.scrolloff = 10
 
 -- Set indentation for specific filetypes
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'html', 'css' },
+  pattern = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'html', 'css', 'svelte' },
   callback = function()
     vim.opt_local.tabstop = 2
     vim.opt_local.shiftwidth = 2
