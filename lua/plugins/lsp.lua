@@ -21,13 +21,6 @@ return {
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
-      -- Set default position encoding to prevent warnings
-      local original_make_position_params = vim.lsp.util.make_position_params
-      vim.lsp.util.make_position_params = function(win, offset_encoding)
-        offset_encoding = offset_encoding or 'utf-16'
-        return original_make_position_params(win, offset_encoding)
-      end
-      
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
