@@ -21,6 +21,13 @@ return {
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
+      -- Set default position encoding to prevent warnings
+      local original_make_position_params = vim.lsp.util.make_position_params
+      vim.lsp.util.make_position_params = function(win, offset_encoding)
+        offset_encoding = offset_encoding or 'utf-16'
+        return original_make_position_params(win, offset_encoding)
+      end
+      
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
@@ -29,7 +36,26 @@ return {
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          -- Custom gd that jumps in same buffer without opening new ones
+          map('gd', function()
+            local params = vim.lsp.util.make_position_params()
+            vim.lsp.buf_request(0, 'textDocument/definition', params, function(_, result)
+              if not result or vim.tbl_isempty(result) then
+                print('No definition found')
+                return
+              end
+              
+              -- If single result, jump directly
+              if result[1] then
+                local uri = result[1].uri or result[1].targetUri
+                local range = result[1].range or result[1].targetRange or result[1].targetSelectionRange
+                
+                -- Jump to location in current window
+                vim.cmd('edit ' .. vim.uri_to_fname(uri))
+                vim.api.nvim_win_set_cursor(0, {range.start.line + 1, range.start.character})
+              end
+            end)
+          end, '[G]oto [D]efinition')
           map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
           map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
           map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
