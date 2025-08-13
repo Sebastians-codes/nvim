@@ -35,7 +35,7 @@ return {
       {}
     }}
 
-    const {}: React.FC<{}Props> = ({{ {} }}) => {{
+    const {} = ({{ {} }}: {}Props) => {{
       return (
         <div>
           {}
@@ -44,7 +44,7 @@ return {
     }};
 
     export default {};
-  ]], { i(1, "Component"), i(2, "// props here"}, rep(1), rep(1), i(3), i(4, "Hello World"), rep(1) }), snippet_opts),
+  ]], { i(1, "Component"), i(2, "// props here"), rep(1), i(3), rep(1), i(4, "Hello World"), rep(1) }), snippet_opts),
 
   -- Interface
   s("int", fmt([[
@@ -56,14 +56,14 @@ return {
   -- Type alias
   s("type", fmt([[
     type {} = {};
-  ]], { i(1, "Props"), i(2, "{ name: string; }"} }), snippet_opts),
+  ]], { i(1, "Props"), i(2, "{ name: string; }") }), snippet_opts),
 
   -- JSX Element
   s("jsx", fmt([[
     <{}{}>
       {}
     </{}>
-  ]], { i(1, "div"), i(2), i(3), i(1) }), snippet_opts),
+  ]], { i(1, "div"), i(2), i(3), rep(1) }), snippet_opts),
 
   -- Self-closing JSX Element
   s("jsxs", fmt([[
