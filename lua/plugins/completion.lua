@@ -13,6 +13,11 @@ return {
       end)(),
       config = function()
         require('luasnip.loaders.from_lua').load { paths = { '~/.config/nvim/snippets/' } }
+        
+        -- Ensure proper filetype detection for snippets
+        local ls = require('luasnip')
+        ls.filetype_extend('typescript', { 'typescriptreact' })
+        ls.filetype_extend('javascript', { 'javascriptreact' })
       end,
     },
     'saadparwaiz1/cmp_luasnip',

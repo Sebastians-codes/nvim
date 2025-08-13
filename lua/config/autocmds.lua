@@ -18,3 +18,18 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.opt_local.tabstop = 4
   end,
 })
+
+-- Ensure proper filetype detection for React files
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+  pattern = { '*.tsx' },
+  callback = function()
+    vim.bo.filetype = 'typescriptreact'
+  end,
+})
+
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+  pattern = { '*.jsx' },
+  callback = function()
+    vim.bo.filetype = 'javascriptreact'
+  end,
+})
