@@ -47,6 +47,8 @@ return {
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>n', group = '[N]ew' },
+        { '<leader>p', group = '[P]ackage' },
+        { '<leader>k', group = '[K]olor' },
 
         -- General keybinds
         { '<leader>w', desc = 'Save File' },
@@ -109,6 +111,17 @@ return {
         -- New file/directory keybinds
         { '<leader>nf', desc = 'New File' },
         { '<leader>nd', desc = 'New Directory' },
+
+        -- Package.json management
+        { '<leader>ps', desc = 'Show package versions' },
+        { '<leader>ph', desc = 'Hide package versions' },
+        { '<leader>pu', desc = 'Update package on line' },
+        { '<leader>pd', desc = 'Delete package on line' },
+
+        -- Color tools
+        { '<leader>kp', desc = 'Color Picker' },
+        { '<leader>kc', desc = 'Convert Color Format' },
+        { '<leader>kt', desc = 'Toggle Color Highlighting' },
 
         -- Function keys
         { '<F1>', desc = 'Debug: Step Into' },
