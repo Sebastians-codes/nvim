@@ -7,7 +7,16 @@ return {
       local lint = require 'lint'
       lint.linters_by_ft = {
         markdown = { 'markdownlint', 'codespell' },
-        ['*'] = { 'codespell' },
+        javascript = { 'codespell' },
+        typescript = { 'codespell' },
+        javascriptreact = { 'codespell' },
+        typescriptreact = { 'codespell' },
+        lua = { 'codespell' },
+        python = { 'codespell' },
+        html = { 'codespell' },
+        css = { 'codespell' },
+        json = { 'codespell' },
+        txt = { 'codespell' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
@@ -51,6 +60,12 @@ return {
           lint.try_lint()
         end,
       })
+
+      -- Add keybinding for codespell fix
+      vim.keymap.set('n', '<leader>cf', function()
+        vim.cmd('!codespell --write-changes %')
+        vim.cmd('edit!')
+      end, { desc = 'Fix spelling with codespell' })
     end,
   },
 }
