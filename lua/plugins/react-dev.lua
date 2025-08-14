@@ -48,7 +48,7 @@ return {
   -- Emmet for HTML/JSX expansion
   {
     'mattn/emmet-vim',
-    ft = { 'html', 'css', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' },
+    ft = { 'html', 'css', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'jsx', 'tsx' },
     init = function()
       vim.g.user_emmet_leader_key = '<C-z>'
       vim.g.user_emmet_settings = {

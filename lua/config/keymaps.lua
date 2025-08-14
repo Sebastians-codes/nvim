@@ -77,6 +77,11 @@ vim.keymap.set('n', '<leader>nf', function()
       
       -- Create and open the file
       vim.cmd('edit ' .. vim.fn.fnameescape(file_path))
+      
+      -- Force LSP attachment for the new file
+      vim.schedule(function()
+        vim.cmd('doautocmd BufRead')
+      end)
     end
   end)
 end, { desc = 'New File' })
