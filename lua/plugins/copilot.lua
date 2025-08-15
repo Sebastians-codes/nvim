@@ -31,6 +31,11 @@ return {
         },
       })
       
+      -- Disable copilot on startup (silently)
+      vim.schedule(function()
+        vim.cmd('silent! Copilot disable')
+      end)
+      
       -- Fix Esc to dismiss Copilot suggestion and exit insert mode
       vim.keymap.set('i', '<Esc>', function()
         if require("copilot.suggestion").is_visible() then
@@ -40,7 +45,16 @@ return {
       end, { expr = true, desc = 'Dismiss Copilot and exit insert mode' })
       
       -- Toggle Copilot on/off
-      vim.keymap.set('n', '<leader>cp', '<cmd>Copilot toggle<cr>', { desc = 'Toggle Copilot' })
+      local copilot_enabled = false
+      vim.keymap.set('n', '<leader>cp', function()
+        if copilot_enabled then
+          vim.cmd('silent! Copilot disable')
+          copilot_enabled = false
+        else
+          vim.cmd('silent! Copilot enable')
+          copilot_enabled = true
+        end
+      end, { desc = 'Toggle Copilot' })
     end,
   },
 }

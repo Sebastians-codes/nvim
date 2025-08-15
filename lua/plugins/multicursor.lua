@@ -5,6 +5,25 @@ return {
     -- Disable default mappings to avoid conflicts
     vim.g.VM_default_mappings = 0
     
+    -- Define case preservation function
+    vim.cmd([[
+      fun! MyTextTransform(cursor, txt) abort
+          " the active cursor isn't affected, text is entered as typed
+          try
+              let original_text = b:VM_Selection.Vars.changed_text[a:cursor.index]
+              if match(original_text, '\u') >= 0 && match(original_text, '\L') < 0
+                  return toupper(a:txt)
+              elseif match(original_text, '\u') == 0
+                  return toupper(a:txt[:0]) . a:txt[1:]
+              else
+                  return a:txt
+              endif
+          catch
+              return a:txt
+          endtry
+      endfun
+    ]])
+    
     -- Custom mappings
     vim.g.VM_maps = {
       ['Find Under'] = '<C-n>',           -- Ctrl+n to select word under cursor
@@ -21,6 +40,12 @@ return {
       ['Goto Next'] = '}',                -- Use } for next cursor
       ['Goto Prev'] = '{',                -- Use { for prev cursor
     }
+    
+    -- Set up smart case change to use our transform function
+    vim.cmd('command! -nargs=0 VMSmartChange call vm#operators#smart_change("MyTextTransform")')
+    
+    -- Add keybinding for case-preserving change
+    vim.keymap.set('n', '<leader>gc', ':VMSmartChange<CR>', { desc = 'Smart case change with preservation' })
     
     -- Settings for better case handling
     vim.g.VM_case_setting = 'ignore'     -- Always case-insensitive (preserves original case when editing)
