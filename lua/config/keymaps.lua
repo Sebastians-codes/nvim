@@ -81,6 +81,17 @@ vim.keymap.set('n', '<leader>nf', function()
       -- Force LSP attachment for the new file
       vim.schedule(function()
         vim.cmd('doautocmd BufRead')
+        -- Force Svelte LSP to attach to new .svelte files
+        if file_path:match('%.svelte$') then
+          vim.schedule(function()
+            local bufnr = vim.api.nvim_get_current_buf()
+            vim.lsp.start({
+              name = 'svelte',
+              cmd = { 'svelteserver', '--stdio' },
+              root_dir = vim.fs.dirname(vim.fs.find({'package.json', '.git'}, { upward = true })[1]),
+            }, { bufnr = bufnr })
+          end)
+        end
       end)
     end
   end)
