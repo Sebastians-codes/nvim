@@ -35,6 +35,16 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
+-- Show statusline
+vim.opt.laststatus = 2
+-- Hide command line (no more save messages)
+vim.opt.cmdheight = 0
+-- Reduce message verbosity to avoid flashing
+vim.opt.shortmess = "filnxtToOFWIcC" -- Suppress most messages including save info
+
+-- Create command abbreviation to make :w silent
+vim.cmd([[cnoreabbrev w silent w]])
+
 -- Set indentation for specific filetypes
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'html', 'css', 'svelte' },
