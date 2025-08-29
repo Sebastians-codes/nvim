@@ -23,7 +23,7 @@ return {
         tmpfile_format = '.cs',
       },
       prettierd = {
-        args = { '--stdin-filepath', '$FILENAME', '--semi', '--single-quote', '--trailing-comma=es5' },
+        args = { '--stdin-filepath', '$FILENAME' },
       },
     },
     format_on_save = function(bufnr)

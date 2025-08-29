@@ -27,7 +27,7 @@ return {
         offset_encoding = offset_encoding or 'utf-16'
         return original_make_position_params(win, offset_encoding)
       end
-      
+
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
@@ -41,18 +41,18 @@ return {
             local params = vim.lsp.util.make_position_params()
             vim.lsp.buf_request(0, 'textDocument/definition', params, function(_, result)
               if not result or vim.tbl_isempty(result) then
-                print('No definition found')
+                print 'No definition found'
                 return
               end
-              
+
               -- If single result, jump directly
               if result[1] then
                 local uri = result[1].uri or result[1].targetUri
                 local range = result[1].range or result[1].targetRange or result[1].targetSelectionRange
-                
+
                 -- Jump to location in current window
                 vim.cmd('edit ' .. vim.uri_to_fname(uri))
-                vim.api.nvim_win_set_cursor(0, {range.start.line + 1, range.start.character})
+                vim.api.nvim_win_set_cursor(0, { range.start.line + 1, range.start.character })
               end
             end)
           end, '[G]oto [D]efinition')
@@ -100,10 +100,10 @@ return {
       -- Set global position encoding preference
       vim.lsp.protocol.PositionEncodingKind = vim.lsp.protocol.PositionEncodingKind or {}
       vim.lsp.protocol.PositionEncodingKind.UTF16 = 'utf-16'
-      
+
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-      
+
       -- Set position encoding to utf-16 (widely supported) to avoid warnings
       capabilities.general = capabilities.general or {}
       capabilities.general.positionEncodings = { 'utf-16' }
@@ -123,7 +123,7 @@ return {
         },
         svelte = {
           capabilities = vim.tbl_deep_extend('force', {}, capabilities, {
-            workspace = { didChangeWatchedFiles = false }
+            workspace = { didChangeWatchedFiles = false },
           }),
           filetypes = { 'svelte' },
         },
@@ -153,8 +153,8 @@ return {
       }
 
       -- Setup Gleam LSP separately (not managed by Mason)
-      require('lspconfig').gleam.setup({})
-      
+      require('lspconfig').gleam.setup {}
     end,
   },
 }
+

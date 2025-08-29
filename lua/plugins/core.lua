@@ -1,7 +1,6 @@
 -- Core plugins
 return {
   'tpope/vim-sleuth',
-  
   {
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -17,3 +16,4 @@ return {
 
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 }
+
