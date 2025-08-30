@@ -234,6 +234,12 @@ return {
         hi('WhichKeyFloat', '', 'NONE', '')
         hi('WhichKeyBorder', c.gray, 'NONE', '')
 
+        -- Fidget (LSP Progress)
+        hi('FidgetTask', c.white, 'NONE', '')
+        hi('FidgetTitle', c.active_fg, 'NONE', '')
+        hi('FidgetSpinner', c.info, 'NONE', '')
+        hi('FidgetNormal', c.white, 'NONE', '')
+
         -- Terminal colors
         vim.g.terminal_color_0 = c.black
         vim.g.terminal_color_1 = '#cd3131'
