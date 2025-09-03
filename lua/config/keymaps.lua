@@ -52,6 +52,10 @@ vim.keymap.set('v', '<C-,>', 'gc', { desc = 'Comment selection', remap = true })
 
 vim.keymap.set('v', '<C-c>', '"+y', { desc = 'Copy to clipboard' })
 
+-- Global Neorg workspace switching (works anywhere)
+vim.keymap.set('n', '<leader>tn', '<cmd>Neorg workspace notes<cr><cmd>Neorg index<cr>', { desc = 'Open Notes workspace' })
+vim.keymap.set('n', '<leader>tw', '<cmd>Neorg workspace work<cr><cmd>Neorg index<cr>', { desc = 'Open Work workspace' })
+
 -- New file and directory creation
 vim.keymap.set('n', '<leader>nf', function()
   local current_dir = vim.fn.expand('%:p:h')
