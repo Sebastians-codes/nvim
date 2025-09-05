@@ -28,8 +28,8 @@ return {
             neorg_leader = '<Leader>',
             hook = function(keybinds)
               -- Quick workspace switching
-              keybinds.map('n', '<leader>tn', '<cmd>Neorg workspace notes<cr><cmd>Neorg index<cr>', { desc = 'Switch to Notes workspace' })
-              keybinds.map('n', '<leader>tw', '<cmd>Neorg workspace work<cr><cmd>Neorg index<cr>', { desc = 'Switch to Work workspace' })
+              keybinds.map('n', '<leader>tn', '<cmd>cd ~/notes<cr><cmd>Neorg workspace notes<cr><cmd>Neorg index<cr>', { desc = 'Switch to Notes workspace' })
+              keybinds.map('n', '<leader>tw', '<cmd>cd ~/work-notes<cr><cmd>Neorg workspace work<cr><cmd>Neorg index<cr>', { desc = 'Switch to Work workspace' })
             end,
           },
         },
