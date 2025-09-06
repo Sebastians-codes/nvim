@@ -67,10 +67,10 @@ return {
           GitSignsAddLn = { bg = "NONE" },
           GitSignsChangeLn = { bg = "NONE" },
           GitSignsDeleteLn = { bg = "NONE" },
-          DiagnosticSignError = { bg = "NONE" },
-          DiagnosticSignWarn = { bg = "NONE" },
-          DiagnosticSignInfo = { bg = "NONE" },
-          DiagnosticSignHint = { bg = "NONE" },
+          DiagnosticSignError = { fg = colors.theme.ui.fg_dim, bg = "NONE" },
+          DiagnosticSignWarn = { fg = colors.theme.ui.fg_dim, bg = "NONE" },
+          DiagnosticSignInfo = { fg = colors.theme.ui.fg_dim, bg = "NONE" },
+          DiagnosticSignHint = { fg = colors.theme.ui.fg_dim, bg = "NONE" },
           CursorLineNr = { fg = colors.theme.ui.fg_dim, bg = "NONE" }, -- Muted line number
           MatchParen = { fg = colors.theme.ui.fg, bg = "NONE", bold = true }, -- White matching brackets
           }
