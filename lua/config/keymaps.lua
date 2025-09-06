@@ -2,14 +2,19 @@
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>w', '<cmd>silent w<CR>', { desc = 'Save File' })
 vim.keymap.set('n', '<leader>pv', '<cmd>:Ex<CR>', { desc = 'Go back to Dir' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+-- Diagnostic keymaps
+vim.keymap.set('n', '<leader>qq', vim.diagnostic.setloclist, { desc = 'Diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>qe', function()
+  vim.diagnostic.open_float({
+    border = 'single'
+  })
+end, { desc = 'Show diagnostic [E]rror' })
+vim.keymap.set('n', '<leader>qa', '<cmd>Telescope diagnostics<cr>', { desc = 'All diagnostics' })
+vim.keymap.set('n', '<leader>qr', function()
+  require('config.project-diagnostics').run_project_check()
+end, { desc = 'Project-wide diagnostics' })
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- Disable arrow keys
-vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
-vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
-vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
-vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Window navigation
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })

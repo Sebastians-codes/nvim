@@ -1,7 +1,7 @@
 -- Options
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.mouse = ''
+vim.opt.mouse = 'a'
 vim.opt.showmode = false
 
 vim.schedule(function()
@@ -16,12 +16,9 @@ vim.opt.signcolumn = 'yes'
 vim.opt.updatetime = 250
 vim.opt.timeoutlen = 300
 
--- Enable inline diagnostics
+-- Disable inline diagnostics (virtual text)
 vim.diagnostic.config {
-  virtual_text = {
-    prefix = '●',
-    source = 'always',
-  },
+  virtual_text = false,
   signs = true,
   underline = true,
   update_in_insert = false,

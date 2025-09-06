@@ -48,7 +48,6 @@ return {
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          -- Custom gd that jumps in same buffer without opening new ones
           map('gd', function()
             local params = vim.lsp.util.make_position_params()
             vim.lsp.buf_request(0, 'textDocument/definition', params, function(_, result)
@@ -57,14 +56,28 @@ return {
                 return
               end
 
-              -- If single result, jump directly
-              if result[1] then
-                local uri = result[1].uri or result[1].targetUri
-                local range = result[1].range or result[1].targetRange or result[1].targetSelectionRange
-
-                -- Jump to location in current window
-                vim.cmd('edit ' .. vim.uri_to_fname(uri))
-                vim.api.nvim_win_set_cursor(0, { range.start.line + 1, range.start.character })
+              local item = result[1]
+              if item then
+                local uri = item.uri or item.targetUri
+                local range = item.range or item.targetRange or item.targetSelectionRange
+                
+                if uri and range then
+                  vim.cmd('edit ' .. vim.uri_to_fname(uri))
+                  
+                  -- Safe cursor positioning
+                  local buf_lines = vim.api.nvim_buf_line_count(0)
+                  local target_line = math.min(math.max(1, range.start.line + 1), buf_lines)
+                  local target_col = math.max(0, range.start.character)
+                  
+                  -- Get line length to validate column
+                  if target_line > 0 and target_line <= buf_lines then
+                    local line_text = vim.api.nvim_buf_get_lines(0, target_line - 1, target_line, false)[1] or ""
+                    target_col = math.min(target_col, #line_text)
+                  end
+                  
+                  vim.api.nvim_win_set_cursor(0, { target_line, target_col })
+                  vim.cmd('normal! zz')
+                end
               end
             end)
           end, '[G]oto [D]efinition')
@@ -121,8 +134,12 @@ return {
       capabilities.general.positionEncodings = { 'utf-16' }
 
       local servers = {
-        omnisharp = {
-          cmd = { 'omnisharp-mono' },
+        csharp_ls = {
+          cmd = { vim.fn.stdpath("data") .. "/mason/packages/csharp-language-server/csharp-ls" },
+          filetypes = { 'cs' },
+          root_dir = function(fname)
+            return require('lspconfig.util').root_pattern('*.sln', '*.csproj', 'omnisharp.json', 'function.json')(fname)
+          end,
         },
         lua_ls = {
           settings = {
@@ -149,8 +166,8 @@ return {
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua',
-        'csharpier',
         'svelte-language-server',
+        'csharp-language-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
