@@ -134,6 +134,18 @@ return {
       capabilities.general.positionEncodings = { 'utf-16' }
 
       local servers = {
+        rust_analyzer = {
+          settings = {
+            ['rust-analyzer'] = {
+              cargo = {
+                allFeatures = true,
+              },
+              checkOnSave = {
+                command = 'cargo check',
+              },
+            },
+          },
+        },
         csharp_ls = {
           cmd = { vim.fn.stdpath("data") .. "/mason/packages/csharp-language-server/csharp-ls" },
           filetypes = { 'cs' },

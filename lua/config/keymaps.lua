@@ -141,3 +141,6 @@ vim.keymap.set('n', '<leader>nd', function()
     end
   end)
 end, { desc = 'New Directory' })
+
+-- Super+\ to type ampersand
+vim.keymap.set({'n', 'i', 'v'}, '<D-\\>', '&', { desc = 'Type ampersand' })
