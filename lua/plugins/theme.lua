@@ -4,6 +4,18 @@ return {
     priority = 1000,
     config = function()
       require("nightfox").setup({
+        palettes = {
+          nordfox = {
+            red = { base = "#a1828a", bright = "#b6969e", dim = "#8f7075" },
+            orange = { base = "#b08a7e", bright = "#c19d93", dim = "#9c7269" },
+            yellow = { base = "#c7b199", bright = "#d5c3aa", dim = "#b69d7c" },
+            green = { base = "#98a893", bright = "#a8b8a5", dim = "#829180" },
+            cyan = { base = "#8aa8b8", bright = "#9bb8c8", dim = "#7690a3" },
+            blue = { base = "#7e94a8", bright = "#8ca6bc", dim = "#6d7f95" },
+            purple = { base = "#9e8ca0", bright = "#b1a3b5", dim = "#8a7688" },
+            pink = { base = "#a18aa8", bright = "#b69dbc", dim = "#8f7695" },
+          }
+        },
         options = {
           compile_path = vim.fn.stdpath("cache") .. "/nightfox",
           compile_file_suffix = "_compiled",
