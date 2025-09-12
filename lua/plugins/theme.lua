@@ -90,6 +90,10 @@ return {
       vim.cmd('highlight MiniStatuslineFilename guibg=NONE')
       vim.cmd('highlight MiniStatuslineFileinfo guibg=NONE')
       vim.cmd('highlight MiniStatuslineInactive guibg=NONE')
+      
+      -- Disable cursor line highlighting
+      vim.cmd('highlight CursorLine guibg=NONE')
+      vim.opt.cursorline = false
     end,
   }
 }
