@@ -133,6 +133,38 @@ return {
       capabilities.general = capabilities.general or {}
       capabilities.general.positionEncodings = { 'utf-16' }
 
+      local function root_pattern(...)
+        local patterns = { ... }
+
+        return function(startpath)
+          startpath = startpath or vim.api.nvim_buf_get_name(0)
+          if not startpath or startpath == '' then
+            return nil
+          end
+
+          if vim.fn.isdirectory(startpath) == 0 then
+            startpath = vim.fs.dirname(startpath)
+          end
+
+          local visited = nil
+          while startpath and startpath ~= '' and startpath ~= visited do
+            for _, pattern in ipairs(patterns) do
+              local globbed = vim.fn.glob(table.concat({ startpath, pattern }, '/'), true, true)
+              if type(globbed) == 'table' then
+                if next(globbed) then
+                  return startpath
+                end
+              elseif globbed ~= '' then
+                return startpath
+              end
+            end
+
+            visited = startpath
+            startpath = vim.fs.dirname(startpath)
+          end
+        end
+      end
+
       local servers = {
         rust_analyzer = {
           settings = {
@@ -149,9 +181,7 @@ return {
         csharp_ls = {
           cmd = { vim.fn.stdpath("data") .. "/mason/packages/csharp-language-server/csharp-ls" },
           filetypes = { 'cs' },
-          root_dir = function(fname)
-            return require('lspconfig.util').root_pattern('*.sln', '*.csproj', 'omnisharp.json', 'function.json')(fname)
-          end,
+          root_dir = root_pattern('*.sln', '*.csproj', 'omnisharp.json', 'function.json'),
         },
         lua_ls = {
           settings = {
@@ -184,18 +214,21 @@ return {
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
+        automatic_enable = false,
       }
 
+      for server_name, server in pairs(servers) do
+        local server_capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        local config = vim.tbl_deep_extend('force', {}, server, { capabilities = server_capabilities })
+        vim.lsp.config(server_name, config)
+        vim.lsp.enable(server_name)
+      end
+
       -- Setup Gleam LSP separately (not managed by Mason)
-      require('lspconfig').gleam.setup {}
+      vim.lsp.config('gleam', {
+        capabilities = capabilities,
+      })
+      vim.lsp.enable('gleam')
     end,
   },
 }
-

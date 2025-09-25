@@ -35,8 +35,8 @@ vim.opt.scrolloff = 10
 
 -- Show statusline
 vim.opt.laststatus = 2
--- Hide command line (no more save messages)
-vim.opt.cmdheight = 0
+-- Give command line enough space to display messages
+vim.opt.cmdheight = 1
 -- Reduce message verbosity to avoid flashing
 vim.opt.shortmess = "filnxtToOFWIcC" -- Suppress most messages including save info
 
@@ -52,4 +52,3 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.opt_local.expandtab = true
   end,
 })
-

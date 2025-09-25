@@ -67,9 +67,9 @@ return {
     'vuki656/package-info.nvim',
     dependencies = 'MunifTanjim/nui.nvim',
     opts = {
-      colors = {
-        up_to_date = "#3C4048",
-        outdated = "#fc514e",
+      highlights = {
+        up_to_date = { fg = "#3C4048" },
+        outdated = { fg = "#fc514e" },
       },
       package_manager = "npm", -- npm, yarn, pnpm
       hide_up_to_date = false,
