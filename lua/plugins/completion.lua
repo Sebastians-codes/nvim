@@ -24,6 +24,8 @@ return {
     local luasnip = require 'luasnip'
     luasnip.config.setup {}
 
+    local has_copilot, copilot = pcall(require, 'copilot.suggestion')
+
     cmp.setup {
       snippet = {
         expand = function(args)
@@ -41,7 +43,7 @@ return {
         ['<C-f>'] = cmp.mapping.scroll_docs(4),
         ['<Tab>'] = cmp.mapping(function(fallback)
           -- Only handle Tab for cmp if Copilot suggestion is not visible
-          if require("copilot.suggestion").is_visible() then
+          if has_copilot and copilot.is_visible() then
             fallback()
           elseif cmp.visible() then
             cmp.confirm({ select = true })
@@ -53,7 +55,7 @@ return {
         end, { 'i', 's' }),
         ['<C-y>'] = cmp.mapping(function(fallback)
           -- Only handle Ctrl-Y for cmp if Copilot suggestion is not visible
-          if require("copilot.suggestion").is_visible() then
+          if has_copilot and copilot.is_visible() then
             fallback()
           elseif cmp.visible() then
             cmp.confirm({ select = true })

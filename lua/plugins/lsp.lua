@@ -137,6 +137,9 @@ return {
         local patterns = { ... }
 
         return function(startpath)
+          if type(startpath) == 'number' then
+            startpath = vim.api.nvim_buf_get_name(startpath)
+          end
           startpath = startpath or vim.api.nvim_buf_get_name(0)
           if not startpath or startpath == '' then
             return nil
@@ -214,21 +217,71 @@ return {
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
-        automatic_enable = false,
+        automatic_installation = false,
       }
 
-      for server_name, server in pairs(servers) do
-        local server_capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-        local config = vim.tbl_deep_extend('force', {}, server, { capabilities = server_capabilities })
-        vim.lsp.config(server_name, config)
-        vim.lsp.enable(server_name)
-      end
+      local vim_lsp_config = type(vim.lsp) == 'table' and type(vim.lsp.config) == 'table' and getmetatable(vim.lsp.config)
+        and type(getmetatable(vim.lsp.config).__call) == 'function'
+        and type(vim.lsp.enable) == 'function'
 
-      -- Setup Gleam LSP separately (not managed by Mason)
-      vim.lsp.config('gleam', {
-        capabilities = capabilities,
-      })
-      vim.lsp.enable('gleam')
+      if vim_lsp_config then
+        for server_name, server in pairs(servers) do
+          local server_capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+          local override_config = vim.tbl_deep_extend('force', {}, server, { capabilities = server_capabilities })
+
+          if type(override_config.root_dir) == 'function' then
+            local old_root_dir = override_config.root_dir
+            local ok_info, info = pcall(debug.getinfo, old_root_dir, 'u')
+            local expects_on_dir = ok_info and info and type(info.nparams) == 'number' and info.nparams >= 2
+
+            if not expects_on_dir then
+              override_config.root_dir = function(bufnr, on_dir)
+                local ok_call, root = pcall(old_root_dir, bufnr)
+                if not ok_call then
+                  vim.notify(string.format('Failed to resolve root_dir for %s: %s', server_name, root), vim.log.levels.ERROR)
+                  return
+                end
+
+                if type(root) == 'function' then
+                  local inner_ok, inner_root = pcall(root, bufnr)
+                  if not inner_ok then
+                    vim.notify(string.format('Failed to resolve root_dir for %s: %s', server_name, inner_root), vim.log.levels.ERROR)
+                    return
+                  end
+                  root = inner_root
+                end
+
+                if root then
+                  on_dir(root)
+                end
+              end
+            end
+          end
+
+          local ok_config, err_config = pcall(vim.lsp.config, server_name, override_config)
+          if not ok_config then
+            vim.notify(string.format('Failed to apply LSP config overrides for %s: %s', server_name, err_config), vim.log.levels.ERROR)
+          else
+            local ok_enable, err_enable = pcall(vim.lsp.enable, server_name)
+            if not ok_enable then
+              vim.notify(string.format('Failed to enable LSP %s: %s', server_name, err_enable), vim.log.levels.ERROR)
+            end
+          end
+        end
+
+      else
+        local lspconfig = require('lspconfig')
+
+        for server_name, server in pairs(servers) do
+          local server_capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+          local config = vim.tbl_deep_extend('force', {}, server, { capabilities = server_capabilities })
+          if lspconfig[server_name] then
+            lspconfig[server_name].setup(config)
+          else
+            vim.notify(string.format('LSP config for %s is missing in nvim-lspconfig', server_name), vim.log.levels.WARN)
+          end
+        end
+      end
     end,
   },
 }
