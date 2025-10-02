@@ -208,12 +208,17 @@ return {
 
       require('mason').setup()
 
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
+      local ensure_installed = {
+        'csharp-language-server',
+        'lua-language-server',
+        'markdownlint',
+        'ols',
+        'prettier',
+        'rust-analyzer',
         'stylua',
         'svelte-language-server',
-        'csharp-language-server',
-      })
+        'tailwindcss-language-server',
+      }
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
