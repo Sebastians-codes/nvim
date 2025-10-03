@@ -1,7 +1,9 @@
 -- Keymaps
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>w', '<cmd>silent w<CR>', { desc = 'Save File' })
-vim.keymap.set('n', '<leader>pv', '<cmd>:Ex<CR>', { desc = 'Go back to Dir' })
+vim.keymap.set('n', '<leader>pv', function()
+  require('config.oil').open_with_preview()
+end, { desc = 'Open parent directory' })
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>qq', vim.diagnostic.setloclist, { desc = 'Diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '<leader>qe', function()
