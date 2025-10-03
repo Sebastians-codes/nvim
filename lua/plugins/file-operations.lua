@@ -68,6 +68,10 @@ return {
         max_width = 90,
         max_height = 35,
       },
+      keymaps = {
+        ['<C-h>'] = false,
+        ['<C-l>'] = false,
+      },
     },
     init = function()
       if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
