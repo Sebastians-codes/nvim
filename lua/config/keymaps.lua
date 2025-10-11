@@ -1,4 +1,5 @@
 -- Keymaps
+local session_manager = require('config.session_manager')
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>w', '<cmd>silent w<CR>', { desc = 'Save File' })
 vim.keymap.set('n', '<leader>pv', function()
@@ -23,6 +24,30 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+-- Tab management
+vim.keymap.set('n', 'tn', '<cmd>tabnew<CR>', { desc = 'New tab' })
+vim.keymap.set('n', 'tx', '<cmd>tabclose<CR>', { desc = 'Close tab' })
+vim.keymap.set('n', 'tt', '<cmd>terminal<CR>', { desc = 'Open terminal' })
+for i = 1, 9 do
+  local idx = i
+  vim.keymap.set('n', 't' .. idx, function()
+    vim.cmd(string.format('tabnext %d', idx))
+  end, { desc = 'Go to tab ' .. idx })
+end
+
+-- Session slots
+vim.keymap.set('n', 'ss', session_manager.manage_slots, { desc = 'Manage session slots' })
+vim.keymap.set('n', 'se', session_manager.assign_slot, { desc = 'Assign session slot' })
+vim.keymap.set('n', '<leader>qs', session_manager.save_and_quit, { desc = 'Save session and quit Neovim' })
+vim.keymap.set('n', 'sq', session_manager.save_and_quit, { desc = 'Save session and quit Neovim' })
+for _, key in ipairs({ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }) do
+  local slot = key
+  local label = slot == '0' and '10' or slot
+  vim.keymap.set('n', 's' .. slot, function()
+    session_manager.load_slot(slot)
+  end, { desc = 'Load session slot ' .. label })
+end
 
 -- Auto-close brackets
 vim.keymap.set('i', '(', '()<Left>')

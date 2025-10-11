@@ -32,16 +32,17 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
-
 -- Show statusline
 vim.opt.laststatus = 2
+-- Hide builtin tabline (tab info is shown in statusline)
+vim.opt.showtabline = 0
 -- Give command line enough space to display messages
-vim.opt.cmdheight = 1
+vim.opt.cmdheight = 0
 -- Reduce message verbosity to avoid flashing
-vim.opt.shortmess = "filnxtToOFWIcC" -- Suppress most messages including save info
+vim.opt.shortmess = 'filnxtToOFWIcC' -- Suppress most messages including save info
 
 -- Create command abbreviation to make :w silent
-vim.cmd([[cnoreabbrev w silent w]])
+vim.cmd [[cnoreabbrev w silent w]]
 
 -- Set indentation for specific filetypes
 vim.api.nvim_create_autocmd('FileType', {
