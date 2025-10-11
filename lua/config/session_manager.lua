@@ -1,8 +1,8 @@
 local M = {}
 
-local slots_path = vim.fn.stdpath('data') .. '/session_slots.json'
+local slots_path = vim.fn.stdpath 'data' .. '/session_slots.json'
 local slot_keys = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }
-local oil_config = require('config.oil')
+local oil_config = require 'config.oil'
 
 local function normalize_session_name(name)
   if not name then
@@ -12,7 +12,7 @@ local function normalize_session_name(name)
   if name == '' then
     return nil
   end
-  if not name:match('%.vim$') then
+  if not name:match '%.vim$' then
     name = name .. '.vim'
   end
   return name
@@ -180,7 +180,7 @@ local function save_slots()
 end
 
 local function list_sessions()
-  local MiniSessions = require('mini.sessions')
+  local MiniSessions = require 'mini.sessions'
   local sessions = {}
 
   local directory = MiniSessions.config.directory or ''
@@ -209,7 +209,7 @@ local function get_session_info(session_name)
   if not session_name then
     return nil
   end
-  local MiniSessions = require('mini.sessions')
+  local MiniSessions = require 'mini.sessions'
   local cfg = MiniSessions.config
   if session_name == cfg.file and cfg.file ~= '' then
     return vim.fn.getcwd() .. '/' .. session_name, 'local'
@@ -261,7 +261,7 @@ local function rename_session_interactive(session_name, opts)
       return
     end
 
-    local MiniSessions = require('mini.sessions')
+    local MiniSessions = require 'mini.sessions'
     local directory = MiniSessions.config.directory or ''
     if directory == '' then
       vim.notify('Session directory is not configured.', vim.log.levels.ERROR)
@@ -348,7 +348,7 @@ local function handle_new_session(slot)
       return
     end
 
-    local MiniSessions = require('mini.sessions')
+    local MiniSessions = require 'mini.sessions'
     sync_harpoon()
     MiniSessions.write(session_name, { force = true })
 
@@ -542,7 +542,7 @@ local function handle_enter()
 
   if entry.type == 'session' then
     oil_config.ensure_loaded()
-    local MiniSessions = require('mini.sessions')
+    local MiniSessions = require 'mini.sessions'
     local ok, err = pcall(MiniSessions.read, entry.session.name, { force = false })
     if not ok then
       vim.notify('Failed to load session: ' .. tostring(err), vim.log.levels.ERROR)
@@ -659,11 +659,11 @@ render_manager = function()
     end
   end
 
-  add_line('Session Manager')
-  add_line('ENTER load  dd delete/clear  r rename  s assign  n new  S swap  q close')
-  add_line('')
+  add_line 'Session Manager'
+  add_line 'ENTER load  dd delete/clear  r rename  s assign  n new  S swap  q close'
+  add_line ''
 
-  add_line('Slots:')
+  add_line 'Slots:'
   for _, slot in ipairs(slot_keys) do
     local name = slots_cache and slots_cache[slot] or nil
     local display = name or '<empty>'
@@ -674,10 +674,10 @@ render_manager = function()
     })
   end
 
-  add_line('')
-  add_line('Sessions:')
+  add_line ''
+  add_line 'Sessions:'
   if #sessions == 0 then
-    add_line('  <no sessions found>')
+    add_line '  <no sessions found>'
   else
     for _, session in ipairs(sessions) do
       local slot_labels = {}
@@ -771,7 +771,7 @@ function M.load_slot(slot)
   end
 
   oil_config.ensure_loaded()
-  local MiniSessions = require('mini.sessions')
+  local MiniSessions = require 'mini.sessions'
   local ok, err = pcall(MiniSessions.read, session_name, { force = false })
   if not ok then
     vim.notify('Failed to load session: ' .. tostring(err), vim.log.levels.ERROR)
@@ -804,7 +804,7 @@ function M.manage_slots()
     height = height,
     row = row,
     col = col,
-    })
+  })
 
   vim.api.nvim_win_set_option(manager_state.win, 'winhl', 'Normal:NormalFloat,FloatBorder:FloatBorder')
   render_manager()
@@ -817,7 +817,7 @@ local function quit_all_safely()
 end
 
 function M.save_and_quit()
-  local MiniSessions = require('mini.sessions')
+  local MiniSessions = require 'mini.sessions'
 
   if vim.v.this_session ~= '' then
     if not write_all_buffers() then
