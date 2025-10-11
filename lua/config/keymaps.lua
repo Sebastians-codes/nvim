@@ -2,9 +2,14 @@
 local session_manager = require('config.session_manager')
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>w', '<cmd>silent w<CR>', { desc = 'Save File' })
-vim.keymap.set('n', '<leader>pv', function()
+local function open_parent_directory()
   require('config.oil').open_with_preview()
-end, { desc = 'Open parent directory' })
+end
+vim.keymap.set('n', '<leader>pv', open_parent_directory, { desc = 'Open parent directory' })
+local function open_parent_directory_in_new_tab()
+  vim.cmd('tabnew')
+  open_parent_directory()
+end
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>qq', vim.diagnostic.setloclist, { desc = 'Diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '<leader>qe', function()
@@ -26,9 +31,12 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Tab management
-vim.keymap.set('n', 'tn', '<cmd>tabnew<CR>', { desc = 'New tab' })
+vim.keymap.set('n', 'tn', open_parent_directory_in_new_tab, { desc = 'New tab with parent directory' })
 vim.keymap.set('n', 'tx', '<cmd>tabclose<CR>', { desc = 'Close tab' })
-vim.keymap.set('n', 'tt', '<cmd>terminal<CR>', { desc = 'Open terminal' })
+vim.keymap.set('n', 'tt', function()
+  vim.cmd('tabnew')
+  vim.cmd('terminal')
+end, { desc = 'New tab with terminal' })
 for i = 1, 9 do
   local idx = i
   vim.keymap.set('n', 't' .. idx, function()

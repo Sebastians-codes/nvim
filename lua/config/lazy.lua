@@ -29,3 +29,8 @@ require('lazy').setup('plugins', {
     },
   },
 })
+
+local ok, startup_sessions = pcall(require, 'config.startup_sessions')
+if ok and startup_sessions and type(startup_sessions.setup) == 'function' then
+  startup_sessions.setup()
+end
