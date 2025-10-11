@@ -59,11 +59,35 @@ local function ensure_preview_for_buffer(bufnr)
       return
     end
 
-    local preview_win = util.get_preview_win({ include_not_owned = true })
-    if preview_win and vim.api.nvim_win_is_valid(preview_win) then
+    local entry_ok, entry = pcall(oil.get_cursor_entry)
+    if not entry_ok or not entry then
+      if not vim.b.oil_preview_pending then
+        vim.b.oil_preview_pending = true
+        vim.defer_fn(function()
+          if vim.api.nvim_buf_is_valid(bufnr) then
+            vim.b.oil_preview_pending = nil
+            ensure_preview_for_buffer(bufnr)
+          end
+        end, 50)
+      end
       return
     end
 
+    local preview_win = util.get_preview_win({ include_not_owned = true })
+    if preview_win and vim.api.nvim_win_is_valid(preview_win) then
+      vim.b.oil_preview_pending = nil
+      return
+    end
+
+    vim.b.oil_preview_pending = nil
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+      if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) ~= bufnr then
+        local buf = vim.api.nvim_win_get_buf(win)
+        if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_get_name(buf) == '' and vim.bo[buf].buftype == '' and vim.bo[buf].filetype == '' and not vim.bo[buf].modified then
+          pcall(vim.api.nvim_win_close, win, true)
+        end
+      end
+    end
     pcall(oil.open_preview, { split = DEFAULT_PREVIEW_SPLIT })
   end)
 end
@@ -96,11 +120,29 @@ function M.setup(opts)
     end,
   })
 
+  vim.api.nvim_create_autocmd('BufWinEnter', {
+    group = group,
+    callback = function(event)
+      if not vim.api.nvim_buf_is_valid(event.buf) then
+        return
+      end
+
+      if vim.bo[event.buf].filetype ~= 'oil' then
+        return
+      end
+
+      vim.defer_fn(function()
+        ensure_preview_for_buffer(event.buf)
+      end, 10)
+    end,
+  })
+
   vim.api.nvim_create_autocmd('BufLeave', {
     group = group,
     callback = function(event)
       if vim.api.nvim_buf_is_valid(event.buf) and vim.bo[event.buf].filetype == 'oil' then
         vim.b[event.buf].oil_preview_autoloaded = nil
+        vim.b[event.buf].oil_preview_pending = nil
       end
     end,
   })
@@ -118,6 +160,10 @@ function M.handle_startup_directory()
       M.open_with_preview(vim.fn.argv(0))
     end)
   end
+end
+
+function M.ensure_loaded()
+  return load_oil() ~= nil
 end
 
 return M

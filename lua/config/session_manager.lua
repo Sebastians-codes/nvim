@@ -2,6 +2,7 @@ local M = {}
 
 local slots_path = vim.fn.stdpath('data') .. '/session_slots.json'
 local slot_keys = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }
+local oil_config = require('config.oil')
 
 local function normalize_session_name(name)
   if not name then
@@ -540,6 +541,7 @@ local function handle_enter()
   end
 
   if entry.type == 'session' then
+    oil_config.ensure_loaded()
     local MiniSessions = require('mini.sessions')
     local ok, err = pcall(MiniSessions.read, entry.session.name, { force = false })
     if not ok then
@@ -768,6 +770,7 @@ function M.load_slot(slot)
     return
   end
 
+  oil_config.ensure_loaded()
   local MiniSessions = require('mini.sessions')
   local ok, err = pcall(MiniSessions.read, session_name, { force = false })
   if not ok then
