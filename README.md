@@ -14,6 +14,7 @@ A custom Neovim configuration featuring the MyGawa theme (inspired by Kanagawa W
 - **Completion**: nvim-cmp with snippet support
 - **Formatting & Linting**: Conform.nvim and nvim-lint
 - **File Explorer**: Oil.nvim for buffer-like file editing
+- **Kulala**: HTTP client for REST API testing
 
 ## Requirements
 
