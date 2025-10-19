@@ -244,28 +244,6 @@ return {
       statusline.section_location = function()
         return '%2l:%-2v'
       end
-    end,
-  },
-
-  {
-    'lukas-reineke/indent-blankline.nvim',
-    main = 'ibl',
-    event = 'BufReadPost',
-    config = function()
-      vim.api.nvim_set_hl(0, 'IblIndent', { fg = '#0a0a0a' })
-      vim.api.nvim_set_hl(0, 'IblScope', { fg = '#0e0e0e' })
-      require('ibl').setup {
-        indent = {
-          char = '│',
-          highlight = 'IblIndent',
-        },
-        scope = {
-          enabled = true,
-          show_start = false,
-          show_end = false,
-          highlight = 'IblScope',
-        },
-      }
-    end,
-  },
+     end,
+   },
 }

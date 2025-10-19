@@ -96,13 +96,21 @@ return {
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
               group = highlight_augroup,
-              callback = vim.lsp.buf.document_highlight,
+              callback = function()
+                if vim.api.nvim_buf_is_valid(event.buf) then
+                  vim.lsp.buf.document_highlight()
+                end
+              end,
             })
 
             vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
               buffer = event.buf,
               group = highlight_augroup,
-              callback = vim.lsp.buf.clear_references,
+              callback = function()
+                if vim.api.nvim_buf_is_valid(event.buf) then
+                  vim.lsp.buf.clear_references()
+                end
+              end,
             })
 
             vim.api.nvim_create_autocmd('LspDetach', {
