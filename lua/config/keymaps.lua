@@ -86,11 +86,15 @@ vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move line up' })
 vim.keymap.set('v', '<A-j>', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
 vim.keymap.set('v', '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
 
--- Comment/uncomment lines with Ctrl+,
-vim.keymap.set('n', '<C-,>', 'gcc', { desc = 'Comment line', remap = true })
-vim.keymap.set('v', '<C-,>', 'gc', { desc = 'Comment selection', remap = true })
-
-vim.keymap.set('v', '<C-c>', '"+y', { desc = 'Copy to clipboard' })
+-- Comment/uncomment lines with <leader>cc
+vim.keymap.set('n', '<leader>cc', function()
+  require('Comment.api').toggle.linewise.current()
+end, { desc = 'Comment line' })
+vim.keymap.set('v', '<leader>cc', function()
+  local esc = vim.api.nvim_replace_termcodes('<ESC>', true, false, true)
+  vim.api.nvim_feedkeys(esc, 'nx', false)
+  require('Comment.api').toggle.linewise(vim.fn.visualmode())
+end, { desc = 'Comment selection' })
 
 -- Custom Shift+K with border
 vim.keymap.set('n', 'K', function()
@@ -98,10 +102,6 @@ vim.keymap.set('n', 'K', function()
     border = 'single'
   })
 end, { desc = 'LSP Hover with border' })
-
--- Global Neorg workspace switching (works anywhere)
-vim.keymap.set('n', '<leader>tn', '<cmd>cd ~/notes<cr><cmd>Neorg workspace notes<cr><cmd>Neorg index<cr>', { desc = 'Open Notes workspace' })
-vim.keymap.set('n', '<leader>tw', '<cmd>cd ~/work-notes<cr><cmd>Neorg workspace work<cr><cmd>Neorg index<cr>', { desc = 'Open Work workspace' })
 
 -- New file and directory creation
 vim.keymap.set('n', '<leader>nf', function()
