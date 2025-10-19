@@ -17,11 +17,16 @@ A custom Neovim configuration featuring the MyGawa theme (inspired by Kanagawa W
 
 ## Requirements
 
-- Neovim >= 0.9.0
+- Neovim >= 0.11.0
 - Git
+- npm
+- dotnet-sdk
+- unzip
 - ripgrep
+- codespell
 - A Nerd Font (optional, but recommended)
-- Node.js (for certain LSP servers)
+
+**Note:** The theme uses transparent backgrounds, so it will use your terminal's background. Recommended terminals: Ghostty, Alacritty, or Kitty.
 
 ## Installation
 
