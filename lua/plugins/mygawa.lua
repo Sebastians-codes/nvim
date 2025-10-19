@@ -168,6 +168,23 @@ function M.setup()
   hi('MiniStatuslineFilename', { fg = '#DCD7BA', bg = 'NONE' })
   hi('MiniStatuslineFileinfo', { fg = '#DCD7BA', bg = 'NONE' })
   hi('MiniStatuslineInactive', { fg = '#727169', bg = 'NONE' })
+
+  hi('TelescopeNormal', { fg = '#DCD7BA', bg = 'NONE' })
+  hi('TelescopeBorder', { fg = '#54546D', bg = 'NONE' })
+  hi('TelescopeSelection', { fg = '#DCD7BA', bg = 'NONE', bold = true })
+  hi('TelescopeSelectionCaret', { fg = '#7E9CD8', bg = 'NONE' })
+  hi('TelescopeMatching', { fg = '#FFA066', bold = true })
+  hi('TelescopePromptNormal', { fg = '#DCD7BA', bg = 'NONE' })
+  hi('TelescopePromptBorder', { fg = '#54546D', bg = 'NONE' })
+  hi('TelescopePromptTitle', { fg = '#7E9CD8', bg = 'NONE' })
+  hi('TelescopeResultsNormal', { fg = '#DCD7BA', bg = 'NONE' })
+  hi('TelescopeResultsBorder', { fg = '#54546D', bg = 'NONE' })
+  hi('TelescopePreviewNormal', { fg = '#DCD7BA', bg = 'NONE' })
+  hi('TelescopePreviewBorder', { fg = '#54546D', bg = 'NONE' })
+
+  hi('GitSignsAdd', { fg = '#76946A', bg = 'NONE' })
+  hi('GitSignsChange', { fg = '#DCA561', bg = 'NONE' })
+  hi('GitSignsDelete', { fg = '#C34043', bg = 'NONE' })
 end
 
 M.setup()
