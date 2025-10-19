@@ -65,7 +65,13 @@ Lazy.nvim will automatically install all plugins on first launch.
 The configuration uses a custom MyGawa theme with:
 - Transparent backgrounds throughout
 - Kanagawa Wave-inspired colors
-- Matching GitUI theme in `~/.config/gitui/theme.ron`
+- Matching GitUI theme and keybindings available in `extras/`
+
+To use the GitUI theme and keybindings:
+```bash
+cp ~/.config/nvim/extras/gitui-theme.ron ~/.config/gitui/theme.ron
+cp ~/.config/nvim/extras/gitui-keybindings.ron ~/.config/gitui/key_bindings.ron
+```
 
 ### Colors
 
