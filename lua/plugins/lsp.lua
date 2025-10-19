@@ -183,9 +183,7 @@ return {
               cargo = {
                 allFeatures = true,
               },
-              checkOnSave = {
-                command = 'cargo check',
-              },
+              checkOnSave = true,
             },
           },
         },
