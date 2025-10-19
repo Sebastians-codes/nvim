@@ -2,6 +2,12 @@
 
 A custom Neovim configuration featuring the MyGawa theme (inspired by Kanagawa Wave) with transparent backgrounds and carefully crafted color schemes.
 
+## Screenshots
+
+![Screenshot 1](assets/screenshot-1.png)
+![Screenshot 2](assets/screenshot-2.png)
+![Screenshot 3](assets/screenshot-3.png)
+
 ## Features
 
 - **Custom MyGawa Theme**: A custom colorscheme based on Kanagawa Wave VSCode theme with full transparency
@@ -94,6 +100,7 @@ The configuration uses a custom MyGawa theme with:
 - `se`: Assign session to slot
 - `s1-s9, s0`: Load session from slot (s0 = slot 10)
 - `sq`: Save session and quit
+- Sessions can also be started from command line: `nvim 1` (starts session in slot 1)
 
 ### Tab Management
 - `tn`: Open new tab with parent directory
