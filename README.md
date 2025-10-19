@@ -87,6 +87,7 @@ The configuration uses a custom MyGawa theme with:
 
 ### General
 - `<leader>w`: Save file
+- `<leader>gg`: gitui
 
 ### Session Management
 - `ss`: Open session manager
