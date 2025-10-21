@@ -28,16 +28,9 @@ return {
       },
     },
     format_on_save = function(bufnr)
-      local disable_filetypes = { c = true, cpp = true }
-      local lsp_format_opt
-      if disable_filetypes[vim.bo[bufnr].filetype] then
-        lsp_format_opt = 'never'
-      else
-        lsp_format_opt = 'fallback'
-      end
       return {
         timeout_ms = 500,
-        lsp_format = lsp_format_opt,
+        lsp_format = 'fallback',
       }
     end,
     formatters_by_ft = {
@@ -49,6 +42,8 @@ return {
       json = { 'prettier' },
       css = { 'prettier' },
       html = { 'prettier' },
+      c = { 'clang_format' },
+      cpp = { 'clang_format' },
       --  cs = { 'csharpier' },
     },
   },
