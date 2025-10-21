@@ -1,7 +1,7 @@
 return {
   {
     name = 'sakurai-theme',
-    dir = vim.fn.stdpath('config'),
+    dir = vim.fn.stdpath 'config',
     enabled = false,
     config = function()
       -- Sakurai theme - inspired by the kocho.jpg sunset/evening sky colors
@@ -136,17 +136,17 @@ return {
         hi('@variable.builtin', c.class, '', '')
         hi('@variable.parameter', c.parameter, '', '')
         hi('@variable.member', c.property, '', '')
-        
+
         -- Variable declarations vs usage
-        hi('@lsp.type.variable', c.parameter, '', '')  -- sakura pink tint for usage
-        hi('@lsp.mod.declaration', c.white, '', '')  -- keep original white for declarations
-        
+        hi('@lsp.type.variable', c.parameter, '', '') -- sakura pink tint for usage
+        hi('@lsp.mod.declaration', c.white, '', '') -- keep original white for declarations
+
         -- LSP semantic tokens for properties (must override LSP)
         hi('@lsp.type.property', c.property, '', '')
         hi('@lsp.type.member', c.property, '', '')
         hi('@lsp.type.property.typescript', c.property, '', '')
         hi('@lsp.type.property.typescriptreact', c.property, '', '')
-        
+
         -- Primitive types - multiple ways TreeSitter might highlight them
         hi('@lsp.type.builtinType', '#ccb3ff', '', '')
         hi('@type.builtin', '#ccb3ff', '', '')
@@ -154,9 +154,9 @@ return {
         hi('@type.builtin.typescript', '#ccb3ff', '', '')
         hi('@type.builtin.javascript', '#ccb3ff', '', '')
         hi('@type.primitive', '#ccb3ff', '', '')
-        
+
         -- Enums
-        hi('@lsp.type.enum', '#9ba0c7', '', '')  -- more muted enum color
+        hi('@lsp.type.enum', '#9ba0c7', '', '') -- more muted enum color
         hi('@lsp.type.enumMember', '#9ba0c7', '', '')
         hi('@constant', c.number, '', '')
         hi('@constant.builtin', c.number, '', '')
@@ -203,7 +203,7 @@ return {
         hi('@tag', c.class, '', '')
         hi('@tag.attribute', c.property, '', '')
         hi('@tag.delimiter', c.operator, '', '')
-        
+
         -- JSX/HTML specific highlights
         hi('@tag.javascript', c.class, '', '')
         hi('@tag.tsx', c.class, '', '')
@@ -269,21 +269,22 @@ return {
       end
 
       setup_sakurai_theme()
-      
+
       -- Re-apply highlights after LSP attaches to override semantic tokens
-      vim.api.nvim_create_autocmd("LspAttach", {
+      vim.api.nvim_create_autocmd('LspAttach', {
         callback = function()
           vim.defer_fn(function()
-            vim.cmd('hi @lsp.type.property guifg=#8fb3ff')
-            vim.cmd('hi @lsp.type.member guifg=#8fb3ff')
-            vim.cmd('hi @lsp.type.property.typescript guifg=#8fb3ff')
-            vim.cmd('hi @lsp.type.property.typescriptreact guifg=#8fb3ff')
-            vim.cmd('hi @type.builtin guifg=#ccb3ff')
-            vim.cmd('hi @type.builtin.typescript guifg=#ccb3ff')
-            vim.cmd('hi @keyword.type guifg=#ccb3ff')
+            vim.cmd 'hi @lsp.type.property guifg=#8fb3ff'
+            vim.cmd 'hi @lsp.type.member guifg=#8fb3ff'
+            vim.cmd 'hi @lsp.type.property.typescript guifg=#8fb3ff'
+            vim.cmd 'hi @lsp.type.property.typescriptreact guifg=#8fb3ff'
+            vim.cmd 'hi @type.builtin guifg=#ccb3ff'
+            vim.cmd 'hi @type.builtin.typescript guifg=#ccb3ff'
+            vim.cmd 'hi @keyword.type guifg=#ccb3ff'
           end, 100)
-        end
+        end,
       })
     end,
   },
 }
+

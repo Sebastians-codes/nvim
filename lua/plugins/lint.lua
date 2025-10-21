@@ -1,5 +1,4 @@
 return {
-
   { -- Linting
     'mfussenegger/nvim-lint',
     event = { 'BufReadPre', 'BufNewFile' },
@@ -63,9 +62,10 @@ return {
 
       -- Add keybinding for codespell fix
       vim.keymap.set('n', '<leader>cf', function()
-        vim.cmd('!codespell --write-changes %')
-        vim.cmd('edit!')
+        vim.cmd '!codespell --write-changes %'
+        vim.cmd 'edit!'
       end, { desc = 'Fix spelling with codespell' })
     end,
   },
 }
+

@@ -2,7 +2,7 @@
 return {
   {
     name = 'myrarch-theme',
-    dir = vim.fn.stdpath('config'),
+    dir = vim.fn.stdpath 'config',
     enabled = false,
     config = function()
       -- Myrarch theme
@@ -136,11 +136,11 @@ return {
         hi('@variable.builtin', c.class, '', '')
         hi('@variable.parameter', c.parameter, '', '')
         hi('@variable.member', c.property, '', '')
-        
+
         -- Variable declarations vs usage
-        hi('@lsp.type.variable', c.parameter, '', '')  -- same as parameter color for usage
-        hi('@lsp.mod.declaration', c.white, '', '')  -- keep original white for declarations
-        
+        hi('@lsp.type.variable', c.parameter, '', '') -- same as parameter color for usage
+        hi('@lsp.mod.declaration', c.white, '', '') -- keep original white for declarations
+
         -- Enums
         hi('@lsp.type.enum', '#5a7291', '', '')
         hi('@lsp.type.enumMember', '#5a7291', '', '')
@@ -187,7 +187,7 @@ return {
         hi('@tag', c.class, '', '')
         hi('@tag.attribute', c.property, '', '')
         hi('@tag.delimiter', c.operator, '', '')
-        
+
         -- JSX/HTML specific highlights
         hi('@tag.javascript', c.class, '', '')
         hi('@tag.tsx', c.class, '', '')
@@ -256,3 +256,4 @@ return {
     end,
   },
 }
+

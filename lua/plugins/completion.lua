@@ -46,7 +46,7 @@ return {
           if has_copilot and copilot.is_visible() then
             fallback()
           elseif cmp.visible() then
-            cmp.confirm({ select = true })
+            cmp.confirm { select = true }
           elseif luasnip.expand_or_locally_jumpable() then
             luasnip.expand_or_jump()
           else
@@ -58,7 +58,7 @@ return {
           if has_copilot and copilot.is_visible() then
             fallback()
           elseif cmp.visible() then
-            cmp.confirm({ select = true })
+            cmp.confirm { select = true }
           else
             fallback()
           end
@@ -87,3 +87,4 @@ return {
     }
   end,
 }
+

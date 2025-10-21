@@ -7,7 +7,7 @@ function M.setup()
   end
   configured = true
 
-  local session_manager = require('config.session_manager')
+  local session_manager = require 'config.session_manager'
 
   local function detect_slot_argument()
     if vim.fn.argc() ~= 1 then
@@ -24,7 +24,7 @@ function M.setup()
       return '0', arg
     end
 
-    if trimmed:match('^%d$') then
+    if trimmed:match '^%d$' then
       return trimmed, arg
     end
 

@@ -1,5 +1,5 @@
 -- Keymaps
-local session_manager = require('config.session_manager')
+local session_manager = require 'config.session_manager'
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>w', '<cmd>silent w<CR>', { desc = 'Save File' })
 local function open_parent_directory()
@@ -7,22 +7,21 @@ local function open_parent_directory()
 end
 vim.keymap.set('n', '<leader>pv', open_parent_directory, { desc = 'Open parent directory' })
 local function open_parent_directory_in_new_tab()
-  vim.cmd('tabnew')
+  vim.cmd 'tabnew'
   open_parent_directory()
 end
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>qq', vim.diagnostic.setloclist, { desc = 'Diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '<leader>qe', function()
-  vim.diagnostic.open_float({
-    border = 'single'
-  })
+  vim.diagnostic.open_float {
+    border = 'single',
+  }
 end, { desc = 'Show diagnostic [E]rror' })
 vim.keymap.set('n', '<leader>qa', '<cmd>Telescope diagnostics<cr>', { desc = 'All diagnostics' })
 vim.keymap.set('n', '<leader>qr', function()
   require('config.project-diagnostics').run_project_check()
 end, { desc = 'Project-wide diagnostics' })
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
 
 -- Window navigation
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
@@ -34,8 +33,8 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', 'tn', open_parent_directory_in_new_tab, { desc = 'New tab with parent directory' })
 vim.keymap.set('n', 'tx', '<cmd>tabclose<CR>', { desc = 'Close tab' })
 vim.keymap.set('n', 'tt', function()
-  vim.cmd('tabnew')
-  vim.cmd('terminal')
+  vim.cmd 'tabnew'
+  vim.cmd 'terminal'
 end, { desc = 'New tab with terminal' })
 for i = 1, 9 do
   local idx = i
@@ -49,7 +48,7 @@ vim.keymap.set('n', 'ss', session_manager.manage_slots, { desc = 'Manage session
 vim.keymap.set('n', 'se', session_manager.assign_slot, { desc = 'Assign session slot' })
 vim.keymap.set('n', '<leader>qs', session_manager.save_and_quit, { desc = 'Save session and quit Neovim' })
 vim.keymap.set('n', 'sq', session_manager.save_and_quit, { desc = 'Save session and quit Neovim' })
-for _, key in ipairs({ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }) do
+for _, key in ipairs { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' } do
   local slot = key
   local label = slot == '0' and '10' or slot
   vim.keymap.set('n', 's' .. slot, function()
@@ -70,10 +69,8 @@ vim.keymap.set('i', '<CR>', function()
   local col = vim.api.nvim_win_get_cursor(0)[2]
   local before = line:sub(col, col)
   local after = line:sub(col + 1, col + 1)
-  
-  if (before == '{' and after == '}') or 
-     (before == '[' and after == ']') or 
-     (before == '(' and after == ')') then
+
+  if (before == '{' and after == '}') or (before == '[' and after == ']') or (before == '(' and after == ')') then
     return '<CR><CR><Up><Tab>'
   else
     return '<CR>'
@@ -98,18 +95,18 @@ end, { desc = 'Comment selection' })
 
 -- Custom Shift+K with border
 vim.keymap.set('n', 'K', function()
-  vim.lsp.buf.hover({
-    border = 'single'
-  })
+  vim.lsp.buf.hover {
+    border = 'single',
+  }
 end, { desc = 'LSP Hover with border' })
 
 -- New file and directory creation
 vim.keymap.set('n', '<leader>nf', function()
-  local current_dir = vim.fn.expand('%:p:h')
+  local current_dir = vim.fn.expand '%:p:h'
   if current_dir == '' then
     current_dir = vim.fn.getcwd()
   end
-  
+
   vim.ui.input({
     prompt = 'New file name: ',
     default = current_dir .. '/',
@@ -121,25 +118,25 @@ vim.keymap.set('n', '<leader>nf', function()
       if not vim.startswith(file_path, '/') then
         file_path = current_dir .. '/' .. file_path
       end
-      
+
       -- Create parent directories if they don't exist
       local parent_dir = vim.fn.fnamemodify(file_path, ':h')
       vim.fn.mkdir(parent_dir, 'p')
-      
+
       -- Create and open the file
       vim.cmd('edit ' .. vim.fn.fnameescape(file_path))
-      
+
       -- Force LSP attachment for the new file
       vim.schedule(function()
-        vim.cmd('doautocmd BufRead')
+        vim.cmd 'doautocmd BufRead'
         -- Force Svelte LSP to attach to new .svelte files
-        if file_path:match('%.svelte$') then
+        if file_path:match '%.svelte$' then
           vim.schedule(function()
             local bufnr = vim.api.nvim_get_current_buf()
             vim.lsp.start({
               name = 'svelte',
               cmd = { 'svelteserver', '--stdio' },
-              root_dir = vim.fs.dirname(vim.fs.find({'package.json', '.git'}, { upward = true })[1]),
+              root_dir = vim.fs.dirname(vim.fs.find({ 'package.json', '.git' }, { upward = true })[1]),
             }, { bufnr = bufnr })
           end)
         end
@@ -149,11 +146,11 @@ vim.keymap.set('n', '<leader>nf', function()
 end, { desc = 'New File' })
 
 vim.keymap.set('n', '<leader>nd', function()
-  local current_dir = vim.fn.expand('%:p:h')
+  local current_dir = vim.fn.expand '%:p:h'
   if current_dir == '' then
     current_dir = vim.fn.getcwd()
   end
-  
+
   vim.ui.input({
     prompt = 'New directory name: ',
     default = current_dir .. '/',
@@ -165,7 +162,7 @@ vim.keymap.set('n', '<leader>nd', function()
       if not vim.startswith(dir_path, '/') then
         dir_path = current_dir .. '/' .. dir_path
       end
-      
+
       -- Create the directory
       local success = vim.fn.mkdir(dir_path, 'p')
       if success == 1 then
@@ -178,4 +175,4 @@ vim.keymap.set('n', '<leader>nd', function()
 end, { desc = 'New Directory' })
 
 -- Super+\ to type ampersand
-vim.keymap.set({'n', 'i', 'v'}, '<D-\\>', '&', { desc = 'Type ampersand' })
+vim.keymap.set({ 'n', 'i', 'v' }, '<D-\\>', '&', { desc = 'Type ampersand' })

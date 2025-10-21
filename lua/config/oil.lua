@@ -73,7 +73,7 @@ local function ensure_preview_for_buffer(bufnr)
       return
     end
 
-    local preview_win = util.get_preview_win({ include_not_owned = true })
+    local preview_win = util.get_preview_win { include_not_owned = true }
     if preview_win and vim.api.nvim_win_is_valid(preview_win) then
       vim.b.oil_preview_pending = nil
       return
@@ -83,7 +83,13 @@ local function ensure_preview_for_buffer(bufnr)
     for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
       if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) ~= bufnr then
         local buf = vim.api.nvim_win_get_buf(win)
-        if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_get_name(buf) == '' and vim.bo[buf].buftype == '' and vim.bo[buf].filetype == '' and not vim.bo[buf].modified then
+        if
+          vim.api.nvim_buf_is_valid(buf)
+          and vim.api.nvim_buf_get_name(buf) == ''
+          and vim.bo[buf].buftype == ''
+          and vim.bo[buf].filetype == ''
+          and not vim.bo[buf].modified
+        then
           pcall(vim.api.nvim_win_close, win, true)
         end
       end
@@ -93,7 +99,7 @@ local function ensure_preview_for_buffer(bufnr)
 end
 
 function M.setup(opts)
-  local oil = require('oil')
+  local oil = require 'oil'
   oil.setup(opts)
 
   local group = vim.api.nvim_create_augroup(AUTOCMD_GROUP, { clear = true })

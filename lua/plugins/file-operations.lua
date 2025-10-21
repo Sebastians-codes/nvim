@@ -4,7 +4,7 @@ return {
     'stevearc/dressing.nvim',
     event = 'VeryLazy',
     config = function()
-      require('dressing').setup({
+      require('dressing').setup {
         input = {
           enabled = true,
           default_prompt = 'Input:',
@@ -36,7 +36,7 @@ return {
             },
           },
         },
-      })
+      }
     end,
   },
   {
@@ -75,11 +75,11 @@ return {
     },
     init = function()
       if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
-        require('lazy').load({ plugins = { 'oil.nvim' } })
+        require('lazy').load { plugins = { 'oil.nvim' } }
       end
     end,
     config = function(_, opts)
-      local oil_config = require('config.oil')
+      local oil_config = require 'config.oil'
       oil_config.setup(opts)
 
       vim.api.nvim_create_autocmd('VimEnter', {

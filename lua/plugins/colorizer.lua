@@ -2,7 +2,7 @@ return {
   {
     'uga-rosa/ccc.nvim',
     config = function()
-      require('ccc').setup({
+      require('ccc').setup {
         -- Your preferred settings
         highlighter = {
           auto_enable = true,
@@ -22,8 +22,8 @@ return {
           'vue',
           'svelte',
         },
-      })
-      
+      }
+
       -- Set up keymaps
       vim.keymap.set('n', '<leader>kp', '<cmd>CccPick<cr>', { desc = 'Color Picker' })
       vim.keymap.set('n', '<leader>kc', '<cmd>CccConvert<cr>', { desc = 'Convert Color Format' })
@@ -31,3 +31,4 @@ return {
     end,
   },
 }
+

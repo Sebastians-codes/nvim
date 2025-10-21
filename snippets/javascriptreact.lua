@@ -1,9 +1,9 @@
-local ls = require("luasnip")
+local ls = require 'luasnip'
 local s = ls.snippet
 local t = ls.text_node
 local i = ls.insert_node
-local rep = require("luasnip.extras").rep
-local fmt = require("luasnip.extras.fmt").fmt
+local rep = require('luasnip.extras').rep
+local fmt = require('luasnip.extras.fmt').fmt
 
 -- Configure snippet options
 local snippet_opts = {
@@ -12,12 +12,15 @@ local snippet_opts = {
   end,
   show_condition = function()
     return not ls.in_snippet()
-  end
+  end,
 }
 
 return {
   -- React Arrow Function Component without props
-  s("rfc", fmt([[
+  s(
+    'rfc',
+    fmt(
+      [[
     const {} = () => {{
       return (
         <div>
@@ -27,10 +30,17 @@ return {
     }};
 
     export default {};
-  ]], { i(1, "Component"), i(2, "Hello World"), rep(1) }), snippet_opts),
+  ]],
+      { i(1, 'Component'), i(2, 'Hello World'), rep(1) }
+    ),
+    snippet_opts
+  ),
 
   -- React Arrow Function Component with props
-  s("rfcp", fmt([[
+  s(
+    'rfcp',
+    fmt(
+      [[
     const {} = ({{ {} }}) => {{
       return (
         <div>
@@ -40,56 +50,124 @@ return {
     }};
 
     export default {};
-  ]], { i(1, "Component"), i(2), i(3, "Hello World"), rep(1) }), snippet_opts),
+  ]],
+      { i(1, 'Component'), i(2), i(3, 'Hello World'), rep(1) }
+    ),
+    snippet_opts
+  ),
 
   -- JSX Element
-  s("jsx", fmt([[
+  s(
+    'jsx',
+    fmt(
+      [[
     <{}{}>
       {}
     </{}>
-  ]], { i(1, "div"), i(2), i(3), i(1) }), snippet_opts),
+  ]],
+      { i(1, 'div'), i(2), i(3), i(1) }
+    ),
+    snippet_opts
+  ),
 
   -- Self-closing JSX Element
-  s("jsxs", fmt([[
+  s(
+    'jsxs',
+    fmt(
+      [[
     <{} {} />
-  ]], { i(1, "input"), i(2, 'type="text"') }), snippet_opts),
+  ]],
+      { i(1, 'input'), i(2, 'type="text"') }
+    ),
+    snippet_opts
+  ),
 
   -- Console log
-  s("cl", fmt([[
+  s(
+    'cl',
+    fmt(
+      [[
     console.log({});
-  ]], { i(1, '"Hello"') }), snippet_opts),
+  ]],
+      { i(1, '"Hello"') }
+    ),
+    snippet_opts
+  ),
 
   -- Export default
-  s("ed", fmt([[
+  s(
+    'ed',
+    fmt(
+      [[
     export default {};
-  ]], { i(1, "Component") }), snippet_opts),
+  ]],
+      { i(1, 'Component') }
+    ),
+    snippet_opts
+  ),
 
   -- Conditional rendering
-  s("cond", fmt([[
+  s(
+    'cond',
+    fmt(
+      [[
     {{ {} && {} }}
-  ]], { i(1, "condition"), i(2, "<div>Content</div>") }), snippet_opts),
+  ]],
+      { i(1, 'condition'), i(2, '<div>Content</div>') }
+    ),
+    snippet_opts
+  ),
 
   -- Ternary operator
-  s("tern", fmt([[
+  s(
+    'tern',
+    fmt(
+      [[
     {{ {} ? {} : {} }}
-  ]], { i(1, "condition"), i(2, "trueValue"), i(3, "falseValue") }), snippet_opts),
+  ]],
+      { i(1, 'condition'), i(2, 'trueValue'), i(3, 'falseValue') }
+    ),
+    snippet_opts
+  ),
 
   -- Map function
-  s("map", fmt([[
+  s(
+    'map',
+    fmt(
+      [[
     {{{}.map(({}) => (
       {}
     ))}}
-  ]], { i(1, "items"), i(2, "item"), i(3, "<div key={item.id}>{item.name}</div>") }), snippet_opts),
+  ]],
+      { i(1, 'items'), i(2, 'item'), i(3, '<div key={item.id}>{item.name}</div>') }
+    ),
+    snippet_opts
+  ),
 
   -- Event handler
-  s("eh", fmt([[
+  s(
+    'eh',
+    fmt(
+      [[
     const handle{} = ({}) => {{
       {}
     }};
-  ]], { i(1, "Click"), i(2, "event"), i(3) }), snippet_opts),
+  ]],
+      { i(1, 'Click'), i(2, 'event'), i(3) }
+    ),
+    snippet_opts
+  ),
 
   -- Props destructuring
-  s("props", fmt([[
+  s(
+    'props',
+    fmt(
+      [[
     const {{ {} }} = props;
-  ]], { i(1, "prop1, prop2") }), snippet_opts),
+  ]],
+      { i(1, 'prop1, prop2') }
+    ),
+    snippet_opts
+  ),
 }
+

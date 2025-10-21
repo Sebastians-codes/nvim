@@ -4,7 +4,25 @@ return {
   build = ':TSUpdate',
   main = 'nvim-treesitter.configs',
   opts = {
-    ensure_installed = { 'bash', 'c', 'c_sharp', 'diff', 'html', 'javascript', 'typescript', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'python', 'query', 'rust', 'svelte', 'vim', 'vimdoc' },
+    ensure_installed = {
+      'bash',
+      'c',
+      'c_sharp',
+      'diff',
+      'html',
+      'javascript',
+      'typescript',
+      'lua',
+      'luadoc',
+      'markdown',
+      'markdown_inline',
+      'python',
+      'query',
+      'rust',
+      'svelte',
+      'vim',
+      'vimdoc',
+    },
     auto_install = true,
     highlight = {
       enable = true,
@@ -13,3 +31,4 @@ return {
     indent = { enable = true, disable = { 'ruby' } },
   },
 }
+

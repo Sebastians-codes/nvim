@@ -23,26 +23,26 @@ return {
     'windwp/nvim-ts-autotag',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     config = function()
-      require('nvim-ts-autotag').setup({
+      require('nvim-ts-autotag').setup {
         opts = {
           enable_close = true, -- Auto close tags
           enable_rename = true, -- Auto rename pairs of tags
-          enable_close_on_slash = false -- Auto close on trailing </
+          enable_close_on_slash = false, -- Auto close on trailing </
         },
-      })
+      }
     end,
   },
 
   -- Surround text objects (change/delete/add surrounding chars)
   {
     'kylechui/nvim-surround',
-    version = "*",
-    event = "VeryLazy",
+    version = '*',
+    event = 'VeryLazy',
     config = function()
-      require("nvim-surround").setup({
+      require('nvim-surround').setup {
         -- Configuration here, or leave empty to use defaults
-      })
-    end
+      }
+    end,
   },
 
   -- Emmet for HTML/JSX expansion
@@ -68,16 +68,16 @@ return {
     dependencies = 'MunifTanjim/nui.nvim',
     opts = {
       highlights = {
-        up_to_date = { fg = "#3C4048" },
-        outdated = { fg = "#fc514e" },
+        up_to_date = { fg = '#3C4048' },
+        outdated = { fg = '#fc514e' },
       },
-      package_manager = "npm", -- npm, yarn, pnpm
+      package_manager = 'npm', -- npm, yarn, pnpm
       hide_up_to_date = false,
       hide_unstable_versions = false,
     },
     config = function(_, opts)
       require('package-info').setup(opts)
-      
+
       -- Set keymaps (using leader+p for package)
       vim.keymap.set('n', '<leader>ps', require('package-info').show, { desc = 'Show package versions' })
       vim.keymap.set('n', '<leader>ph', require('package-info').hide, { desc = 'Hide package versions' })

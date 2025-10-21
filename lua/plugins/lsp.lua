@@ -17,19 +17,22 @@ return {
       { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
-      { 'j-hui/fidget.nvim', opts = {
-        notification = {
-          window = {
-            winblend = 0,
-            border = "none",
+      {
+        'j-hui/fidget.nvim',
+        opts = {
+          notification = {
+            window = {
+              winblend = 0,
+              border = 'none',
+            },
+          },
+          progress = {
+            display = {
+              progress_icon = { pattern = 'dots', period = 1 },
+            },
           },
         },
-        progress = {
-          display = {
-            progress_icon = { pattern = "dots", period = 1 },
-          },
-        },
-      } },
+      },
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
@@ -60,23 +63,23 @@ return {
               if item then
                 local uri = item.uri or item.targetUri
                 local range = item.range or item.targetRange or item.targetSelectionRange
-                
+
                 if uri and range then
                   vim.cmd('edit ' .. vim.uri_to_fname(uri))
-                  
+
                   -- Safe cursor positioning
                   local buf_lines = vim.api.nvim_buf_line_count(0)
                   local target_line = math.min(math.max(1, range.start.line + 1), buf_lines)
                   local target_col = math.max(0, range.start.character)
-                  
+
                   -- Get line length to validate column
                   if target_line > 0 and target_line <= buf_lines then
-                    local line_text = vim.api.nvim_buf_get_lines(0, target_line - 1, target_line, false)[1] or ""
+                    local line_text = vim.api.nvim_buf_get_lines(0, target_line - 1, target_line, false)[1] or ''
                     target_col = math.min(target_col, #line_text)
                   end
-                  
+
                   vim.api.nvim_win_set_cursor(0, { target_line, target_col })
-                  vim.cmd('normal! zz')
+                  vim.cmd 'normal! zz'
                 end
               end
             end)
@@ -188,7 +191,7 @@ return {
           },
         },
         csharp_ls = {
-          cmd = { vim.fn.stdpath("data") .. "/mason/packages/csharp-language-server/csharp-ls" },
+          cmd = { vim.fn.stdpath 'data' .. '/mason/packages/csharp-language-server/csharp-ls' },
           filetypes = { 'cs' },
           root_dir = root_pattern('*.sln', '*.csproj', 'omnisharp.json', 'function.json'),
         },
@@ -231,7 +234,9 @@ return {
         automatic_installation = false,
       }
 
-      local vim_lsp_config = type(vim.lsp) == 'table' and type(vim.lsp.config) == 'table' and getmetatable(vim.lsp.config)
+      local vim_lsp_config = type(vim.lsp) == 'table'
+        and type(vim.lsp.config) == 'table'
+        and getmetatable(vim.lsp.config)
         and type(getmetatable(vim.lsp.config).__call) == 'function'
         and type(vim.lsp.enable) == 'function'
 
@@ -279,9 +284,8 @@ return {
             end
           end
         end
-
       else
-        local lspconfig = require('lspconfig')
+        local lspconfig = require 'lspconfig'
 
         for server_name, server in pairs(servers) do
           local server_capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
