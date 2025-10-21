@@ -17,10 +17,9 @@ return {
     notify_on_error = false,
     formatters = {
       csharpier = {
-        command = 'csharpier',
-        args = { 'format', '$FILENAME' },
-        stdin = false,
-        tmpfile_format = '.cs',
+        command = 'dotnet',
+        args = { 'csharpier', '--write-stdout' },
+        stdin = true,
       },
       prettier = {
         command = 'prettier',
@@ -44,7 +43,6 @@ return {
       html = { 'prettier' },
       c = { 'clang_format' },
       cpp = { 'clang_format' },
-      --  cs = { 'csharpier' },
     },
   },
 }

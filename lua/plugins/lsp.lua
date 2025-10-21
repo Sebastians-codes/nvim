@@ -190,11 +190,7 @@ return {
             },
           },
         },
-        csharp_ls = {
-          cmd = { vim.fn.stdpath 'data' .. '/mason/packages/csharp-language-server/csharp-ls' },
-          filetypes = { 'cs' },
-          root_dir = root_pattern('*.sln', '*.csproj', 'omnisharp.json', 'function.json'),
-        },
+
         lua_ls = {
           settings = {
             Lua = {
@@ -215,10 +211,14 @@ return {
         },
       }
 
-      require('mason').setup()
+      require('mason').setup {
+        registries = {
+          'github:mason-org/mason-registry',
+          'github:Crashdummyy/mason-registry',
+        },
+      }
 
       local ensure_installed = {
-        'csharp-language-server',
         'lua-language-server',
         'markdownlint',
         'ols',
