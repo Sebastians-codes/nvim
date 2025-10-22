@@ -4,7 +4,8 @@ local M = {
     vim.g.sonokai_enable_italic = 1
     vim.g.sonokai_transparent_background = 0
     vim.cmd [[colorscheme sonokai]]
-  end
+  end,
 }
 
 return M
+

@@ -8,7 +8,8 @@ local M = {
       transparent = false,
     }
     vim.cmd [[colorscheme github_dark_default]]
-  end
+  end,
 }
 
 return M
+

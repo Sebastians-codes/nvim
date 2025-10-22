@@ -9,7 +9,8 @@ local M = {
     vim.g.moonflyUnderlineMatchParen = 1
     vim.g.moonflyVirtualTextColor = 1
     vim.cmd [[colorscheme moonfly]]
-  end
+  end,
 }
 
 return M
+

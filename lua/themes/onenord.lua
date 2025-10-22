@@ -22,7 +22,8 @@ local M = {
       custom_colors = {},
     }
     vim.cmd [[colorscheme onenord]]
-  end
+  end,
 }
 
 return M
+

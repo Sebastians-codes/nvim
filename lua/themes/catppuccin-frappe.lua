@@ -4,7 +4,8 @@ local M = {
       flavour = 'frappe',
     }
     vim.cmd [[colorscheme catppuccin]]
-  end
+  end,
 }
 
 return M
+

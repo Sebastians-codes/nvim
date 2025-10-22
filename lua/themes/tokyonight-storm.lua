@@ -4,7 +4,8 @@ local M = {
       style = 'storm',
     }
     vim.cmd [[colorscheme tokyonight]]
-  end
+  end,
 }
 
 return M
+

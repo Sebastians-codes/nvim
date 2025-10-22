@@ -25,7 +25,8 @@ local M = {
       },
     }
     vim.cmd [[colorscheme kanagawa]]
-  end
+  end,
 }
 
 return M
+

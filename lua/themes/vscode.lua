@@ -7,7 +7,8 @@ local M = {
       disable_nvimtree_bg = true,
     }
     vim.cmd [[colorscheme vscode]]
-  end
+  end,
 }
 
 return M
+

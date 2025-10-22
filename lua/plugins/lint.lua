@@ -4,6 +4,7 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       local lint = require 'lint'
+      lint.linters.codespell.cmd = vim.fn.stdpath('data') .. '/mason/bin/codespell'
       lint.linters_by_ft = {
         markdown = { 'markdownlint', 'codespell' },
         javascript = { 'codespell' },
@@ -62,10 +63,10 @@ return {
 
       -- Add keybinding for codespell fix
       vim.keymap.set('n', '<leader>cf', function()
-        vim.cmd '!codespell --write-changes %'
+        local mason_bin = vim.fn.stdpath('data') .. '/mason/bin/codespell'
+        vim.cmd('!' .. mason_bin .. ' --write-changes %')
         vim.cmd 'edit!'
       end, { desc = 'Fix spelling with codespell' })
     end,
   },
 }
-

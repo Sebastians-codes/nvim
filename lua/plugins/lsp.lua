@@ -219,11 +219,16 @@ return {
       }
 
       local ensure_installed = {
+        'clangd',
+        'codespell',
+        'csharpier',
         'lua-language-server',
         'markdownlint',
         'ols',
         'prettier',
+        'roslyn',
         'rust-analyzer',
+        'rzls',
         'stylua',
         'svelte-language-server',
         'tailwindcss-language-server',

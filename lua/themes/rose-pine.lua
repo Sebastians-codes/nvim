@@ -8,7 +8,7 @@ local M = {
     vim.o.termguicolors = true
     vim.g.colors_name = 'rose-pine'
 
-    require('rose-pine').setup({
+    require('rose-pine').setup {
       variant = 'auto',
       dark_variant = 'main',
       bold_vert_split = false,
@@ -39,10 +39,11 @@ local M = {
         },
       },
       highlight_groups = {},
-    })
+    }
 
     vim.cmd 'colorscheme rose-pine'
   end,
 }
 
 return M
+

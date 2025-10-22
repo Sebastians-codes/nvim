@@ -1,7 +1,8 @@
 local M = {
   setup = function()
     vim.cmd [[colorscheme iceberg]]
-  end
+  end,
 }
 
 return M
+

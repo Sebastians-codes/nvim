@@ -8,7 +8,8 @@ local M = {
       disable_italics = false,
     }
     vim.cmd [[colorscheme poimandres]]
-  end
+  end,
 }
 
 return M
+

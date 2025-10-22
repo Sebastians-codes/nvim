@@ -4,7 +4,8 @@ local M = {
     vim.g.edge_enable_italic = 1
     vim.g.edge_transparent_background = 0
     vim.cmd [[colorscheme edge]]
-  end
+  end,
 }
 
 return M
+

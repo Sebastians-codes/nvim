@@ -8,7 +8,8 @@ local M = {
       terminal_colors = true,
     }
     vim.cmd [[colorscheme cyberdream]]
-  end
+  end,
 }
 
 return M
+

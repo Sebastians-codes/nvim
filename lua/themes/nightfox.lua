@@ -2,7 +2,7 @@ local M = {
   setup = function()
     require('nightfox').setup {}
     vim.cmd [[colorscheme nightfox]]
-  end
+  end,
 }
 
 return M

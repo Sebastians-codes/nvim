@@ -15,7 +15,8 @@ local M = {
       on_highlights = function(highlights, colors) end,
     }
     vim.cmd [[colorscheme modus]]
-  end
+  end,
 }
 
 return M
+

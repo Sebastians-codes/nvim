@@ -9,7 +9,8 @@ local M = {
     vim.g.nightflyUnderlineMatchParen = 1
     vim.g.nightflyVirtualTextColor = 1
     vim.cmd [[colorscheme nightfly]]
-  end
+  end,
 }
 
 return M
+

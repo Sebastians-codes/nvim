@@ -1,7 +1,8 @@
 local M = {
   setup = function()
     vim.cmd [[colorscheme palenight]]
-  end
+  end,
 }
 
 return M
+

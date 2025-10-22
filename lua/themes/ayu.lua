@@ -5,7 +5,8 @@ local M = {
       overrides = {},
     }
     vim.cmd [[colorscheme ayu-dark]]
-  end
+  end,
 }
 
 return M
+

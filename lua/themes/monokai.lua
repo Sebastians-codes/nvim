@@ -2,7 +2,8 @@ local M = {
   setup = function()
     require('monokai').setup {}
     vim.cmd [[colorscheme monokai]]
-  end
+  end,
 }
 
 return M
+

@@ -55,7 +55,8 @@ local M = {
       custom_highlights = {},
     }
     vim.cmd [[colorscheme material]]
-  end
+  end,
 }
 
 return M
+
