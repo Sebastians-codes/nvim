@@ -181,3 +181,8 @@ vim.keymap.set({ 'n', 'i', 'v' }, '<D-\\>', '&', { desc = 'Type ampersand' })
 vim.keymap.set('n', '<leader>tt', function()
   require('themes.manager').show_theme_picker()
 end, { desc = 'Theme picker' })
+
+-- Transparency toggle
+vim.keymap.set('n', '<leader>ts', function()
+  require('themes.manager').toggle_transparency()
+end, { desc = 'Toggle transparency' })

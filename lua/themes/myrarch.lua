@@ -37,23 +37,33 @@ local M = {
         }
 
         local function hi(group, fg, bg, attr)
-          local cmd = 'highlight ' .. group
-          if fg and fg ~= '' then
-            cmd = cmd .. ' guifg=' .. fg
-          end
-          if bg and bg ~= '' then
-            cmd = cmd .. ' guibg=' .. bg
-          end
-          if attr and attr ~= '' then
-            cmd = cmd .. ' gui=' .. attr
-          end
-          vim.cmd(cmd)
-        end
+           local opts = {}
+           if fg and fg ~= '' then
+             opts.fg = fg
+           end
+           if bg and bg ~= '' then
+             opts.bg = bg
+           end
+           if attr and attr ~= '' then
+             if attr == 'bold' then
+               opts.bold = true
+             elseif attr == 'italic' then
+               opts.italic = true
+             elseif attr == 'underline' then
+               opts.underline = true
+             elseif attr == 'undercurl' then
+               opts.undercurl = true
+             elseif attr == 'strikethrough' then
+               opts.strikethrough = true
+             end
+           end
+           vim.api.nvim_set_hl(0, group, opts)
+         end
 
         -- Basic highlights
-        hi('Normal', c.white, 'NONE', '')
+        hi('Normal', c.white, '', '')
         hi('Cursor', c.black, c.cursor, '')
-        hi('CursorLine', '', 'NONE', '')
+        hi('CursorLine', '', '', '')
         hi('CursorColumn', '', c.line_bg, '')
         hi('LineNr', c.light_gray, '', '')
         hi('CursorLineNr', c.focus_fg, '', 'bold')
@@ -61,26 +71,25 @@ local M = {
         hi('VisualNOS', '', '#404040', '')
         hi('Search', c.black, c.number, '')
         hi('IncSearch', c.black, c.active_fg, '')
-        hi('MatchParen', '', '#0064001a', '')
+        hi('MatchParen', '', '#006400', '')
         hi('VertSplit', c.gray, '', '')
         hi('WinSeparator', c.gray, '', '')
-        hi('StatusLine', c.active_fg, 'NONE', '')
-        hi('StatusLineNC', c.foreground, 'NONE', '')
-        hi('TabLine', c.foreground, 'NONE', '')
-        hi('TabLineFill', '', 'NONE', '')
-        hi('TabLineSel', c.active_fg, 'NONE', 'bold')
-        hi('Pmenu', c.warning, 'NONE', '')
-        hi('PmenuSel', c.active_fg, 'NONE', '')
-        hi('PmenuSbar', '', 'NONE', '')
-        hi('PmenuThumb', '', 'NONE', '')
-        hi('FloatBorder', c.gray, 'NONE', '')
-        hi('NormalFloat', c.white, 'NONE', '')
-        hi('Folded', c.comment, '#8484841c', '')
-        hi('FoldColumn', c.light_gray, '', '')
-        hi('DiffAdd', '', '#587c0c4c', '')
-        hi('DiffChange', '', '#0c7d9d52', '')
-        hi('DiffDelete', '', '#94151b54', '')
-        hi('DiffText', '', '#bcbcbc14', '')
+        hi('StatusLine', c.active_fg, '', '')
+        hi('StatusLineNC', c.foreground, '', '')
+        hi('TabLine', c.foreground, '', '')
+        hi('TabLineFill', '', '', '')
+        hi('TabLineSel', c.active_fg, '', 'bold')
+        hi('Pmenu', c.warning, '', '')
+        hi('PmenuSel', c.active_fg, '', '')
+        hi('PmenuSbar', '', '', '')
+        hi('PmenuThumb', '', '', '')
+        hi('FloatBorder', c.gray, '', '')
+        hi('NormalFloat', c.white, '', '')
+        hi('Folded', c.comment, '#848484', '')
+        hi('DiffAdd', '', '#587c0c', '')
+        hi('DiffChange', '', '#0c7d9d', '')
+        hi('DiffDelete', '', '#94151b', '')
+        hi('DiffText', '', '#bcbcbc', '')
         hi('DiagnosticError', c.error, '', '')
         hi('DiagnosticWarn', c.warning, '', '')
         hi('DiagnosticInfo', c.info, '', '')
@@ -207,24 +216,24 @@ local M = {
         hi('@keyword.exception.c_sharp', '#8b4242', '', '')
 
         -- Telescope
-        hi('TelescopeNormal', c.white, 'NONE', '')
-        hi('TelescopeBorder', c.gray, 'NONE', '')
-        hi('TelescopeSelection', c.active_fg, 'NONE', '')
-        hi('TelescopeSelectionCaret', c.active_fg, 'NONE', '')
-        hi('TelescopeMatching', c.number, 'NONE', '')
+        hi('TelescopeNormal', c.white, '', '')
+        hi('TelescopeBorder', c.gray, '', '')
+        hi('TelescopeSelection', c.active_fg, '', '')
+        hi('TelescopeSelectionCaret', c.active_fg, '', '')
+        hi('TelescopeMatching', c.number, '', '')
 
         -- Which-key
-        hi('WhichKey', c.property, 'NONE', '')
-        hi('WhichKeyGroup', c.class, 'NONE', '')
-        hi('WhichKeyDesc', c.white, 'NONE', '')
-        hi('WhichKeyFloat', '', 'NONE', '')
-        hi('WhichKeyBorder', c.gray, 'NONE', '')
+        hi('WhichKey', c.property, '', '')
+        hi('WhichKeyGroup', c.class, '', '')
+        hi('WhichKeyDesc', c.white, '', '')
+        hi('WhichKeyFloat', '', '', '')
+        hi('WhichKeyBorder', c.gray, '', '')
 
         -- Fidget (LSP Progress)
-        hi('FidgetTask', c.white, 'NONE', '')
-        hi('FidgetTitle', c.active_fg, 'NONE', '')
-        hi('FidgetSpinner', c.info, 'NONE', '')
-        hi('FidgetNormal', c.white, 'NONE', '')
+        hi('FidgetTask', c.white, '', '')
+        hi('FidgetTitle', c.active_fg, '', '')
+        hi('FidgetSpinner', c.info, '', '')
+        hi('FidgetNormal', c.white, '', '')
 
         -- Terminal colors
         vim.g.terminal_color_0 = c.black

@@ -1,21 +1,6 @@
 local M = {
   setup = function()
     vim.cmd([[colorscheme nes]])
-    
-    local groups = {
-      'Normal', 'NormalFloat', 'SignColumn', 'StatusLine', 'StatusLineNC',
-      'TabLine', 'TabLineFill', 'TabLineSel', 'ColorColumn', 'CursorLine',
-      'CursorColumn', 'Pmenu', 'PmenuSbar', 'Folded', 'FoldColumn',
-      'TelescopeNormal', 'TelescopeBorder', 'TelescopePromptNormal',
-      'TelescopePromptBorder', 'TelescopeResultsNormal', 'TelescopeResultsBorder',
-      'TelescopePreviewNormal', 'TelescopePreviewBorder', 'TelescopeTitle',
-      'TelescopePromptTitle', 'TelescopePreviewTitle', 'TelescopeResultsTitle',
-      'NvimTreeNormal', 'NvimTreeStatuslineNc', 'WhichKeyFloat', 'FloatBorder',
-      'WhichKeyNormal', 'WhichKeyBorder',
-    }
-    for _, group in ipairs(groups) do
-      vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
-    end
     vim.g.nvim_tree_disable_default_colors = 1
     vim.g.nvim_web_devicons_set_default_icon = 1
   end

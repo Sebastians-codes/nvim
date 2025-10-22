@@ -3,6 +3,57 @@ local M = {}
 local data_path = vim.fn.stdpath 'data'
 local theme_file = data_path .. '/current_theme.txt'
 
+M.transparency = {
+  enabled = true,
+  groups = {
+    -- Core UI
+    'Normal', 'NormalFloat', 'SignColumn', 'StatusLine', 'StatusLineNC',
+    'TabLine', 'TabLineFill', 'TabLineSel', 'ColorColumn', 'CursorLine',
+    'CursorColumn', 'Pmenu', 'PmenuSbar', 'PmenuSel', 'PmenuThumb',
+    'Folded', 'FoldColumn', 'LineNr', 'CursorLineNr',
+
+    -- Telescope (comprehensive)
+    'TelescopeNormal', 'TelescopeBorder', 'TelescopePromptNormal',
+    'TelescopePromptBorder', 'TelescopeResultsNormal', 'TelescopeResultsBorder',
+    'TelescopePreviewNormal', 'TelescopePreviewBorder', 'TelescopeTitle',
+    'TelescopePromptTitle', 'TelescopePreviewTitle', 'TelescopeResultsTitle',
+    'TelescopeSelection', 'TelescopeSelectionCaret', 'TelescopeMatching',
+    'TelescopeMultiSelection', 'TelescopeMultiIcon', 'TelescopePreviewMessage',
+    'TelescopePreviewMessageFillchar', 'TelescopePreviewSticky', 'TelescopePreviewCharDev',
+    'TelescopePreviewDirectory', 'TelescopePreviewBlock', 'TelescopePreviewLink',
+    'TelescopePreviewSocket', 'TelescopePreviewRead', 'TelescopePreviewWrite',
+    'TelescopePreviewExecute', 'TelescopePreviewHyphen', 'TelescopePreviewPipe',
+    'TelescopePreviewLine', 'TelescopePreviewMatch', 'TelescopePreviewGroup',
+
+    -- WhichKey (comprehensive)
+    'WhichKeyFloat', 'FloatBorder', 'WhichKeyNormal', 'WhichKeyBorder',
+    'WhichKey', 'WhichKeyGroup', 'WhichKeyDesc', 'WhichKeySeparator',
+    'WhichKeyValue', 'WhichKeyIcon', 'WhichKeyIconGrey',
+
+    -- Oil (file manager)
+    'OilDir', 'OilDirIcon', 'OilFile', 'OilLink', 'OilCreate', 'OilDelete',
+    'OilMove', 'OilCopy', 'OilChange', 'OilRestore', 'OilPermissionNone',
+    'OilPermissionRead', 'OilPermissionWrite', 'OilPermissionExecute',
+    'OilTypeDir', 'OilTypeFile', 'OilTypeLink', 'OilTypeSocket', 'OilTypeBlock',
+    'OilTypeChar', 'OilTypeFifo', 'OilTypeUnknown', 'OilPreview',
+
+    -- Other plugins
+    'MiniStatuslineModeReplace', 'MiniStatuslineModeCommand', 'MiniStatuslineModeOther',
+    'MiniStatuslineDevinfo', 'MiniStatuslineFilename', 'MiniStatuslineFileinfo',
+    'MiniStatuslineInactive', 'NvimTreeNormal', 'NvimTreeStatuslineNc',
+    'BufferLineFill', 'BufferLineBackground', 'BufferLineBuffer',
+    'BufferLineTab', 'BufferLineTabSelected', 'BufferLineTabClose',
+    'LualineNormal', 'LualineInactive', 'LualineInsert', 'LualineVisual',
+    'LualineReplace', 'LualineCommand', 'LualineTerminal',
+    'GitSignsAdd', 'GitSignsChange', 'GitSignsDelete',
+    'DiagnosticFloatingError', 'DiagnosticFloatingWarn', 'DiagnosticFloatingInfo', 'DiagnosticFloatingHint',
+
+    -- Generic floating windows and popups
+    'NormalNC', 'MsgArea', 'MsgSeparator', 'VertSplit', 'WinSeparator',
+    'EndOfBuffer', 'QuickFixLine', 'qfSeparator', 'WildMenu',
+  }
+}
+
 M.themes = {
   mygawa = function()
     require('themes.mygawa').setup()
@@ -47,15 +98,20 @@ function M.load_theme(theme_name, silent)
 
   M.themes[theme_name]()
 
+  -- Apply transparency if enabled
+  if M.transparency.enabled then
+    for _, group in ipairs(M.transparency.groups) do
+      vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
+    end
+  end
+
   local file = io.open(theme_file, 'w')
   if file then
     file:write(theme_name)
     file:close()
   end
 
-  if not silent then
-    vim.notify('Theme switched to: ' .. theme_name, vim.log.levels.INFO)
-  end
+  -- Silent theme switching - no notifications
   return true
 end
 
@@ -67,6 +123,24 @@ function M.get_saved_theme()
     return theme
   end
   return 'mygawa'
+end
+
+function M.toggle_transparency()
+  M.transparency.enabled = not M.transparency.enabled
+
+  -- Reapply current theme with new transparency setting
+  local current_theme = M.get_saved_theme()
+  if M.themes[current_theme] then
+    M.themes[current_theme]()
+    if M.transparency.enabled then
+      for _, group in ipairs(M.transparency.groups) do
+        vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
+      end
+    end
+  end
+
+  local status = M.transparency.enabled and 'enabled' or 'disabled'
+  vim.notify('Transparency ' .. status, vim.log.levels.INFO)
 end
 
 function M.show_theme_picker()
