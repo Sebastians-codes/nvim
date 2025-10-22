@@ -176,3 +176,8 @@ end, { desc = 'New Directory' })
 
 -- Super+\ to type ampersand
 vim.keymap.set({ 'n', 'i', 'v' }, '<D-\\>', '&', { desc = 'Type ampersand' })
+
+-- Theme picker
+vim.keymap.set('n', '<leader>tt', function()
+  require('themes.manager').show_theme_picker()
+end, { desc = 'Theme picker' })

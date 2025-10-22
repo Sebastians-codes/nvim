@@ -1,46 +1,39 @@
--- Custom theme (disabled)
-return {
-  {
-    name = 'myrarch-theme',
-    dir = vim.fn.stdpath 'config',
-    enabled = false,
-    config = function()
-      -- Myrarch theme
-      local function setup_myrarch_theme()
+local M = {
+  setup = function()
         vim.cmd 'highlight clear'
         if vim.fn.exists 'syntax_on' == 1 then
           vim.cmd 'syntax reset'
         end
 
         vim.o.background = 'dark'
-        vim.g.colors_name = 'myrarch'
+        vim.g.colors_name = 'sakurai'
 
         local c = {
-          black = '#000000',
-          dark_gray = '#1b1c1d',
-          gray = '#2d2d30',
-          light_gray = '#5c5c6e',
-          white = '#cdcdcd',
-          foreground = '#be8c8c',
-          cursor = '#c2c2c2',
-          line_bg = '#282830',
-          active_fg = '#deb896',
-          focus_fg = '#ddb795',
-          property = '#b0b8c0',
-          number = '#C2966B',
-          parameter = '#d9c8ce',
-          class = '#b06767',
-          namespace = '#748fa7',
-          keyword = '#7894AB',
-          control_kw = '#748fa7',
-          interface = '#d57d7d',
-          func = '#be8c8c',
-          operator = '#CDCDCD',
-          string = '#deb896',
-          comment = '#8c8c8c',
-          error = '#d2788c',
-          warning = '#e6be8c',
-          info = '#61a0c4',
+          black = '#0f0820',
+          dark_gray = '#1a1429',
+          gray = '#2a2435',
+          light_gray = '#4a4555',
+          white = '#e8e0f0',
+          foreground = '#c8b8e0',
+          cursor = '#e0d0ff',
+          line_bg = '#251d35',
+          active_fg = '#ff9eb5',
+          focus_fg = '#ffb3c1',
+          property = '#8fb3ff',
+          number = '#d4a085',
+          parameter = '#d4c2f0',
+          class = '#b084cc',
+          namespace = '#6b9dff',
+          keyword = '#9bb8ff',
+          control_kw = '#7a9eff',
+          interface = '#e495b3',
+          func = '#c8a2ff',
+          operator = '#e0d0ff',
+          string = '#a6d4ff',
+          comment = '#6b5980',
+          error = '#ff6b8a',
+          warning = '#ffcc66',
+          info = '#66b3ff',
         }
 
         local function hi(group, fg, bg, attr)
@@ -59,16 +52,17 @@ return {
 
         -- Basic highlights
         hi('Normal', c.white, 'NONE', '')
+        hi('NormalNC', c.white, 'NONE', '')
         hi('Cursor', c.black, c.cursor, '')
         hi('CursorLine', '', 'NONE', '')
         hi('CursorColumn', '', c.line_bg, '')
         hi('LineNr', c.light_gray, '', '')
         hi('CursorLineNr', c.focus_fg, '', 'bold')
-        hi('Visual', '', '#404040', '')
-        hi('VisualNOS', '', '#404040', '')
+        hi('Visual', '', '#3d2952', '')
+        hi('VisualNOS', '', '#3d2952', '')
         hi('Search', c.black, c.number, '')
         hi('IncSearch', c.black, c.active_fg, '')
-        hi('MatchParen', '', '#0064001a', '')
+        hi('MatchParen', '', '#4a2d66', '')
         hi('VertSplit', c.gray, '', '')
         hi('WinSeparator', c.gray, '', '')
         hi('StatusLine', c.active_fg, 'NONE', '')
@@ -82,12 +76,12 @@ return {
         hi('PmenuThumb', '', 'NONE', '')
         hi('FloatBorder', c.gray, 'NONE', '')
         hi('NormalFloat', c.white, 'NONE', '')
-        hi('Folded', c.comment, '#8484841c', '')
+        hi('Folded', c.comment, '#3d2952', '')
         hi('FoldColumn', c.light_gray, '', '')
-        hi('DiffAdd', '', '#587c0c4c', '')
-        hi('DiffChange', '', '#0c7d9d52', '')
-        hi('DiffDelete', '', '#94151b54', '')
-        hi('DiffText', '', '#bcbcbc14', '')
+        hi('DiffAdd', '', '#2d4a2d', '')
+        hi('DiffChange', '', '#2d3d5c', '')
+        hi('DiffDelete', '', '#5c2d2d', '')
+        hi('DiffText', '', '#4a4a66', '')
         hi('DiagnosticError', c.error, '', '')
         hi('DiagnosticWarn', c.warning, '', '')
         hi('DiagnosticInfo', c.info, '', '')
@@ -138,21 +132,37 @@ return {
         hi('@variable.member', c.property, '', '')
 
         -- Variable declarations vs usage
-        hi('@lsp.type.variable', c.parameter, '', '') -- same as parameter color for usage
+        hi('@lsp.type.variable', c.parameter, '', '') -- sakura pink tint for usage
         hi('@lsp.mod.declaration', c.white, '', '') -- keep original white for declarations
 
+        -- LSP semantic tokens for properties (must override LSP)
+        hi('@lsp.type.property', c.property, '', '')
+        hi('@lsp.type.member', c.property, '', '')
+        hi('@lsp.type.property.typescript', c.property, '', '')
+        hi('@lsp.type.property.typescriptreact', c.property, '', '')
+
+        -- Primitive types - multiple ways TreeSitter might highlight them
+        hi('@lsp.type.builtinType', '#ccb3ff', '', '')
+        hi('@type.builtin', '#ccb3ff', '', '')
+        hi('@keyword.type', '#ccb3ff', '', '')
+        hi('@type.builtin.typescript', '#ccb3ff', '', '')
+        hi('@type.builtin.javascript', '#ccb3ff', '', '')
+        hi('@type.primitive', '#ccb3ff', '', '')
+
         -- Enums
-        hi('@lsp.type.enum', '#5a7291', '', '')
-        hi('@lsp.type.enumMember', '#5a7291', '', '')
+        hi('@lsp.type.enum', '#9ba0c7', '', '') -- more muted enum color
+        hi('@lsp.type.enumMember', '#9ba0c7', '', '')
         hi('@constant', c.number, '', '')
         hi('@constant.builtin', c.number, '', '')
         hi('@constant.macro', c.keyword, '', '')
         hi('@string', c.string, '', '')
-        hi('@string.escape', c.operator, '', '')
-        hi('@string.special', c.operator, '', '')
+        hi('@string.escape', c.string, '', 'bold')
+        hi('@string.special', c.string, '', 'italic')
+        hi('@string.regexp', c.string, '', '')
         hi('@character', c.string, '', '')
-        hi('@character.special', c.operator, '', '')
+        hi('@character.special', c.string, '', 'bold')
         hi('@number', c.number, '', '')
+        hi('@number.float', c.number, '', '')
         hi('@boolean', c.number, '', '')
         hi('@float', c.number, '', '')
         hi('@function', c.func, '', '')
@@ -204,14 +214,14 @@ return {
         hi('LspCodeLens', c.comment, '', '')
         hi('LspInlayHint', c.comment, '', 'italic')
 
-        -- Language-specific highlights (after general highlights)
+        -- Language-specific highlights
         hi('@type.go', c.keyword, '', '')
         hi('@type.builtin.go', c.keyword, '', '')
         hi('@keyword.function.go', c.control_kw, '', '')
-        hi('@keyword.return.go', '#4a5f7a', '', '')
+        hi('@keyword.return.go', '#6b7aff', '', '')
         hi('@function.macro.rust', c.class, '', '')
-        hi('@keyword.return.c_sharp', '#4a5f7a', '', '')
-        hi('@keyword.exception.c_sharp', '#8b4242', '', '')
+        hi('@keyword.return.c_sharp', '#6b7aff', '', '')
+        hi('@keyword.exception.c_sharp', '#cc6699', '', '')
 
         -- Telescope
         hi('TelescopeNormal', c.white, 'NONE', '')
@@ -233,27 +243,39 @@ return {
         hi('FidgetSpinner', c.info, 'NONE', '')
         hi('FidgetNormal', c.white, 'NONE', '')
 
-        -- Terminal colors
+        -- Terminal colors (inspired by sunset/twilight)
         vim.g.terminal_color_0 = c.black
-        vim.g.terminal_color_1 = '#cd3131'
-        vim.g.terminal_color_2 = '#0dbc79'
-        vim.g.terminal_color_3 = '#e5e510'
-        vim.g.terminal_color_4 = '#2472c8'
-        vim.g.terminal_color_5 = '#bc3fbc'
-        vim.g.terminal_color_6 = '#11a8cd'
-        vim.g.terminal_color_7 = '#e5e5e5'
-        vim.g.terminal_color_8 = '#666666'
-        vim.g.terminal_color_9 = '#f14c4c'
-        vim.g.terminal_color_10 = '#23d18b'
-        vim.g.terminal_color_11 = '#f5f543'
-        vim.g.terminal_color_12 = '#3b8eea'
-        vim.g.terminal_color_13 = '#d670d6'
-        vim.g.terminal_color_14 = '#29b8db'
-        vim.g.terminal_color_15 = '#e5e5e5'
-      end
+        vim.g.terminal_color_1 = '#ff6b8a'
+        vim.g.terminal_color_2 = '#66ff99'
+        vim.g.terminal_color_3 = '#ffcc66'
+        vim.g.terminal_color_4 = '#6b9dff'
+        vim.g.terminal_color_5 = '#cc6699'
+        vim.g.terminal_color_6 = '#66ccff'
+        vim.g.terminal_color_7 = '#e8e0f0'
+        vim.g.terminal_color_8 = '#4a4555'
+        vim.g.terminal_color_9 = '#ff9eb5'
+        vim.g.terminal_color_10 = '#99ffb3'
+        vim.g.terminal_color_11 = '#ffd699'
+        vim.g.terminal_color_12 = '#99b3ff'
+        vim.g.terminal_color_13 = '#e495b3'
+        vim.g.terminal_color_14 = '#99d6ff'
+        vim.g.terminal_color_15 = '#f0e8ff'
 
-      setup_myrarch_theme()
-    end,
-  },
+    vim.api.nvim_create_autocmd('LspAttach', {
+      callback = function()
+        vim.defer_fn(function()
+          vim.cmd 'hi @lsp.type.property guifg=#8fb3ff'
+          vim.cmd 'hi @lsp.type.member guifg=#8fb3ff'
+          vim.cmd 'hi @lsp.type.property.typescript guifg=#8fb3ff'
+          vim.cmd 'hi @lsp.type.property.typescriptreact guifg=#8fb3ff'
+          vim.cmd 'hi @type.builtin guifg=#ccb3ff'
+          vim.cmd 'hi @type.builtin.typescript guifg=#ccb3ff'
+          vim.cmd 'hi @keyword.type guifg=#ccb3ff'
+        end, 100)
+      end,
+    })
+  end
 }
+
+return M
 

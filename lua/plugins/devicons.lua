@@ -9,11 +9,11 @@ return {
         override_by_filename = {},
         override_by_extension = {},
       }
-      
+
       vim.schedule(function()
         local devicons = require 'nvim-web-devicons'
         local icons = devicons.get_icons()
-        
+
         for name, icon in pairs(icons) do
           devicons.set_icon {
             [name] = {
