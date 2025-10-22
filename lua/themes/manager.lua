@@ -10,7 +10,7 @@ M.transparency = {
     'Normal', 'NormalFloat', 'SignColumn', 'StatusLine', 'StatusLineNC',
     'TabLine', 'TabLineFill', 'TabLineSel', 'ColorColumn', 'CursorLine',
     'CursorColumn', 'Pmenu', 'PmenuSbar', 'PmenuSel', 'PmenuThumb',
-    'Folded', 'FoldColumn',
+    'Folded', 'FoldColumn', 'LineNr', 'CursorLineNr', 'CursorLineSign', 'CursorLineFold',
 
     -- Telescope (comprehensive)
     'TelescopeNormal', 'TelescopeBorder', 'TelescopePromptNormal',
