@@ -261,20 +261,25 @@ function M.show_theme_picker()
   local actions = require 'telescope.actions'
   local action_state = require 'telescope.actions.state'
 
-  local current_theme = M.get_saved_theme()
-  local original_theme = current_theme -- Store for restoration
-  local selected = false -- Flag to track if user made a selection
-  local theme_list = {}
-  for name, _ in pairs(M.themes) do
-    local display = name
-    if name == current_theme then
-      display = display .. " [Current]"
-    end
-    if name == "myrarch" or name == "mygawa" or name == "sakurai" or name == "rose_pine" then
-      display = display .. " (Custom)"
-    end
-    table.insert(theme_list, { display = display, value = name })
-  end
+   local current_theme = M.get_saved_theme()
+   local original_theme = current_theme -- Store for restoration
+   local selected = false -- Flag to track if user made a selection
+   local theme_list = {}
+   local theme_names = {}
+   for name, _ in pairs(M.themes) do
+     table.insert(theme_names, name)
+   end
+   table.sort(theme_names)
+   for _, name in ipairs(theme_names) do
+     local display = name
+     if name == current_theme then
+       display = display .. " [Current]"
+     end
+     if name == "myrarch" or name == "mygawa" or name == "sakurai" or name == "rose_pine" then
+       display = display .. " (Custom)"
+     end
+     table.insert(theme_list, { display = display, value = name })
+   end
   -- Add index numbers to display
   for i, theme in ipairs(theme_list) do
     theme.index = i
