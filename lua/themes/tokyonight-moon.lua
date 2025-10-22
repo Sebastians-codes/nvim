@@ -1,8 +1,10 @@
 local M = {
   setup = function()
-    require('tokyonight').setup {}
+    require('tokyonight').setup {
+      style = 'moon',
+    }
     vim.cmd [[colorscheme tokyonight]]
-  end,
+  end
 }
 
 return M

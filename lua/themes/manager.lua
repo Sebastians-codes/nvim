@@ -1,7 +1,7 @@
 local M = {}
 
 local data_path = vim.fn.stdpath 'data'
-local theme_file = data_path .. '/current_theme.txt'
+local state_file = data_path .. '/theme_state.json'
 
 M.transparency = {
   enabled = true,
@@ -10,7 +10,7 @@ M.transparency = {
     'Normal', 'NormalFloat', 'SignColumn', 'StatusLine', 'StatusLineNC',
     'TabLine', 'TabLineFill', 'TabLineSel', 'ColorColumn', 'CursorLine',
     'CursorColumn', 'Pmenu', 'PmenuSbar', 'PmenuSel', 'PmenuThumb',
-    'Folded', 'FoldColumn', 'LineNr', 'CursorLineNr',
+    'Folded', 'FoldColumn',
 
     -- Telescope (comprehensive)
     'TelescopeNormal', 'TelescopeBorder', 'TelescopePromptNormal',
@@ -30,13 +30,6 @@ M.transparency = {
     'WhichKey', 'WhichKeyGroup', 'WhichKeyDesc', 'WhichKeySeparator',
     'WhichKeyValue', 'WhichKeyIcon', 'WhichKeyIconGrey',
 
-    -- Oil (file manager)
-    'OilDir', 'OilDirIcon', 'OilFile', 'OilLink', 'OilCreate', 'OilDelete',
-    'OilMove', 'OilCopy', 'OilChange', 'OilRestore', 'OilPermissionNone',
-    'OilPermissionRead', 'OilPermissionWrite', 'OilPermissionExecute',
-    'OilTypeDir', 'OilTypeFile', 'OilTypeLink', 'OilTypeSocket', 'OilTypeBlock',
-    'OilTypeChar', 'OilTypeFifo', 'OilTypeUnknown', 'OilPreview',
-
     -- Other plugins
     'MiniStatuslineModeReplace', 'MiniStatuslineModeCommand', 'MiniStatuslineModeOther',
     'MiniStatuslineDevinfo', 'MiniStatuslineFilename', 'MiniStatuslineFileinfo',
@@ -49,7 +42,7 @@ M.transparency = {
     'DiagnosticFloatingError', 'DiagnosticFloatingWarn', 'DiagnosticFloatingInfo', 'DiagnosticFloatingHint',
 
     -- Generic floating windows and popups
-    'NormalNC', 'MsgArea', 'MsgSeparator', 'VertSplit', 'WinSeparator',
+    'NormalNC', 'MsgArea', 'MsgSeparator',
     'EndOfBuffer', 'QuickFixLine', 'qfSeparator', 'WildMenu',
   }
 }
@@ -67,26 +60,111 @@ M.themes = {
   nes = function()
     require('themes.nes').setup()
   end,
-  tokyonight = function()
-    require('themes.tokyonight').setup()
+  ['tokyonight-moon'] = function()
+    require('themes.tokyonight-moon').setup()
   end,
-  catppuccin = function()
-    require('themes.catppuccin').setup()
+  ['tokyonight-storm'] = function()
+    require('themes.tokyonight-storm').setup()
+  end,
+  ['tokyonight-night'] = function()
+    require('themes.tokyonight-night').setup()
+  end,
+
+  ['catppuccin-latte'] = function()
+    require('themes.catppuccin-latte').setup()
+  end,
+  ['catppuccin-frappe'] = function()
+    require('themes.catppuccin-frappe').setup()
+  end,
+  ['catppuccin-macchiato'] = function()
+    require('themes.catppuccin-macchiato').setup()
   end,
   gruvbox = function()
     require('themes.gruvbox').setup()
   end,
+  dracula = function()
+    require('themes.dracula').setup()
+  end,
+  everforest = function()
+    require('themes.everforest').setup()
+  end,
+  kanagawa = function()
+    require('themes.kanagawa').setup()
+  end,
+  oxocarbon = function()
+    require('themes.oxocarbon').setup()
+  end,
+  github = function()
+    require('themes.github').setup()
+  end,
+  vscode = function()
+    require('themes.vscode').setup()
+  end,
+  monokai = function()
+    require('themes.monokai').setup()
+  end,
+  solarized = function()
+    require('themes.solarized').setup()
+  end,
+  ayu = function()
+    require('themes.ayu').setup()
+  end,
+  palenight = function()
+    require('themes.palenight').setup()
+  end,
+  sonokai = function()
+    require('themes.sonokai').setup()
+  end,
+  cyberdream = function()
+    require('themes.cyberdream').setup()
+  end,
+  melange = function()
+    require('themes.melange').setup()
+  end,
+  modus = function()
+    require('themes.modus').setup()
+  end,
+  poimandres = function()
+    require('themes.poimandres').setup()
+  end,
+  onenord = function()
+    require('themes.onenord').setup()
+  end,
+  material = function()
+    require('themes.material').setup()
+  end,
+  nightfly = function()
+    require('themes.nightfly').setup()
+  end,
+  moonfly = function()
+    require('themes.moonfly').setup()
+  end,
+  edge = function()
+    require('themes.edge').setup()
+  end,
+  ['gruvbox-material'] = function()
+    require('themes.gruvbox-material').setup()
+  end,
+
+  iceberg = function()
+    require('themes.iceberg').setup()
+  end,
+  tender = function()
+    require('themes.tender').setup()
+  end,
+
   nord = function()
     require('themes.nord').setup()
   end,
-  ['rose-pine'] = function()
-    require('themes.rose-pine').setup()
-  end,
+
   nightfox = function()
     require('themes.nightfox').setup()
   end,
   onedark = function()
     require('themes.onedark').setup()
+  end,
+  ['rose-pine'] = function()
+    require('themes.rose-pine').setup()
   end,
 }
 
@@ -99,30 +177,50 @@ function M.load_theme(theme_name, silent)
   M.themes[theme_name]()
 
   -- Apply transparency if enabled
-  if M.transparency.enabled then
-    for _, group in ipairs(M.transparency.groups) do
-      vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
+    if M.transparency.enabled then
+      for _, group in ipairs(M.transparency.groups) do
+        vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
+      end
+      vim.opt.fillchars:append({ eob = ' ' })
     end
-  end
 
-  local file = io.open(theme_file, 'w')
+    if not M.transparency.enabled then
+      vim.opt.fillchars:append({ eob = '~' })
+    end
+
+  local file = io.open(state_file, 'w')
   if file then
-    file:write(theme_name)
+    file:write(vim.json.encode({theme = theme_name, transparent = M.transparency.enabled}))
     file:close()
+  else
+    vim.notify('Failed to save theme state', vim.log.levels.ERROR)
   end
 
-  -- Silent theme switching - no notifications
   return true
 end
 
 function M.get_saved_theme()
-  local file = io.open(theme_file, 'r')
-  if file then
-    local theme = file:read '*all'
-    file:close()
-    return theme
+  local ok, lines = pcall(vim.fn.readfile, state_file)
+  if ok and #lines > 0 then
+    local content = table.concat(lines, '\n')
+    local decoded = vim.json.decode(content)
+    if decoded then
+      return decoded.theme or 'mygawa'
+    end
   end
   return 'mygawa'
+end
+
+function M.get_transparency_state()
+  local ok, lines = pcall(vim.fn.readfile, state_file)
+  if ok and #lines > 0 then
+    local content = table.concat(lines, '\n')
+    local decoded = vim.json.decode(content)
+    if decoded then
+      return decoded.transparent or false
+    end
+  end
+  return false
 end
 
 function M.toggle_transparency()
@@ -136,7 +234,16 @@ function M.toggle_transparency()
       for _, group in ipairs(M.transparency.groups) do
         vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
       end
+      vim.opt.fillchars:append({ eob = ' ' })
     end
+  end
+
+  local file = io.open(state_file, 'w')
+  if file then
+    file:write(vim.json.encode({theme = current_theme, transparent = M.transparency.enabled}))
+    file:close()
+  else
+    vim.notify('Failed to save theme state', vim.log.levels.ERROR)
   end
 
   local status = M.transparency.enabled and 'enabled' or 'disabled'
@@ -150,26 +257,47 @@ function M.show_theme_picker()
   local actions = require 'telescope.actions'
   local action_state = require 'telescope.actions.state'
 
+  local current_theme = M.get_saved_theme()
   local theme_list = {}
   for name, _ in pairs(M.themes) do
-    table.insert(theme_list, name)
+    local display = name
+    if name == current_theme then
+      display = display .. " [Current]"
+    end
+    if name == "myrarch" or name == "mygawa" or name == "sakurai" or name == "rose_pine" then
+      display = display .. " (Custom)"
+    end
+    table.insert(theme_list, { display = display, value = name })
   end
-  table.sort(theme_list)
+  table.sort(theme_list, function(a, b) return a.value < b.value end)
+
+  -- Add index numbers to display
+  for i, theme in ipairs(theme_list) do
+    theme.display = string.format("%2d. %s", i, theme.display)
+  end
 
   pickers
     .new({}, {
-      prompt_title = 'Select Theme',
+      prompt_title = 'Select Theme (Transparency: ' .. (M.transparency.enabled and 'Enabled' or 'Disabled') .. ')',
       finder = finders.new_table {
         results = theme_list,
+        entry_maker = function(entry)
+          return {
+            value = entry.value,
+            display = entry.display,
+            ordinal = entry.display,
+          }
+        end,
       },
       sorter = conf.generic_sorter {},
       attach_mappings = function(prompt_bufnr, map)
         actions.select_default:replace(function()
           actions.close(prompt_bufnr)
           local selection = action_state.get_selected_entry()
-          M.load_theme(selection[1])
+          M.load_theme(selection.value)
         end)
-        return true
+  -- Silent theme switching - no notifications
+  return true
       end,
     })
     :find()
