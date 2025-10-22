@@ -1,7 +1,7 @@
 -- Keymaps
 local session_manager = require 'config.session_manager'
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-vim.keymap.set('n', '<leader>w', '<cmd>silent w<CR>', { desc = 'Save File' })
+vim.keymap.set('n', '<leader>w', '<cmd>silent wa<CR>', { desc = 'Save All Files' })
 local function open_parent_directory()
   require('config.oil').open_with_preview()
 end
