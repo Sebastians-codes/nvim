@@ -170,7 +170,9 @@ M.themes = {
 
 function M.load_theme(theme_name, silent)
   if not M.themes[theme_name] then
-    vim.notify('Theme "' .. theme_name .. '" not found', vim.log.levels.ERROR)
+    if not silent then
+      vim.notify('Theme "' .. theme_name .. '" not found', vim.log.levels.ERROR)
+    end
     return false
   end
 
@@ -193,7 +195,9 @@ function M.load_theme(theme_name, silent)
     file:write(vim.json.encode({theme = theme_name, transparent = M.transparency.enabled}))
     file:close()
   else
-    vim.notify('Failed to save theme state', vim.log.levels.ERROR)
+    if not silent then
+      vim.notify('Failed to save theme state', vim.log.levels.ERROR)
+    end
   end
 
   return true
@@ -258,6 +262,8 @@ function M.show_theme_picker()
   local action_state = require 'telescope.actions.state'
 
   local current_theme = M.get_saved_theme()
+  local original_theme = current_theme -- Store for restoration
+  local selected = false -- Flag to track if user made a selection
   local theme_list = {}
   for name, _ in pairs(M.themes) do
     local display = name
@@ -269,11 +275,19 @@ function M.show_theme_picker()
     end
     table.insert(theme_list, { display = display, value = name })
   end
-  table.sort(theme_list, function(a, b) return a.value < b.value end)
-
   -- Add index numbers to display
   for i, theme in ipairs(theme_list) do
+    theme.index = i
     theme.display = string.format("%2d. %s", i, theme.display)
+  end
+
+  -- Live preview function
+  local function preview_theme(entry)
+    if entry and entry.value ~= current_theme then
+      -- Apply the preview theme
+      M.load_theme(entry.value, true) -- Silent mode
+      current_theme = entry.value
+    end
   end
 
   pickers
@@ -285,19 +299,92 @@ function M.show_theme_picker()
           return {
             value = entry.value,
             display = entry.display,
-            ordinal = entry.display,
+            ordinal = string.format("%02d", entry.index or 1) .. " " .. entry.value, -- Search by index (01,10) or name
+            path = vim.fn.stdpath('config') .. '/init.lua', -- Preview sample file
           }
         end,
       },
       sorter = conf.generic_sorter {},
+      previewer = conf.file_previewer({}),
       attach_mappings = function(prompt_bufnr, map)
+        -- Load first theme on open
+        if #theme_list > 0 then
+          M.load_theme(theme_list[1].value, true)
+        end
+
+        -- Live preview on selection movement
+        local function preview_current()
+          local entry = action_state.get_selected_entry(prompt_bufnr)
+          preview_theme(entry)
+        end
+
+        -- Override movement keys to include preview
+        map('n', 'j', function()
+          actions.move_selection_next(prompt_bufnr)
+          preview_current()
+        end)
+        map('n', 'k', function()
+          actions.move_selection_previous(prompt_bufnr)
+          preview_current()
+        end)
+        map('n', '<Down>', function()
+          actions.move_selection_next(prompt_bufnr)
+          preview_current()
+        end)
+        map('n', '<Up>', function()
+          actions.move_selection_previous(prompt_bufnr)
+          preview_current()
+        end)
+
+        map('i', '<Down>', function()
+          actions.move_selection_next(prompt_bufnr)
+          preview_current()
+        end)
+        map('i', '<Up>', function()
+          actions.move_selection_previous(prompt_bufnr)
+          preview_current()
+        end)
+
+        -- Initial preview
+        vim.defer_fn(preview_current, 10)
+
+        -- Preview on search/filter changes
+        vim.api.nvim_create_autocmd('TextChangedI', {
+          buffer = prompt_bufnr,
+          callback = function()
+            vim.defer_fn(preview_current, 50)
+          end,
+        })
+
+        -- Toggle transparency with Ctrl+T
+        map('i', '<C-t>', function()
+          M.toggle_transparency()
+        end)
+        map('n', '<C-t>', function()
+          M.toggle_transparency()
+        end)
+
         actions.select_default:replace(function()
+          selected = true
           actions.close(prompt_bufnr)
           local selection = action_state.get_selected_entry()
+          -- Keep the preview theme as final selection
           M.load_theme(selection.value)
         end)
-  -- Silent theme switching - no notifications
-  return true
+
+        -- Restore original theme when picker closes without selection
+        vim.api.nvim_create_autocmd('BufLeave', {
+          buffer = prompt_bufnr,
+          once = true,
+          callback = function()
+            -- Only restore if we didn't make a final selection
+            if not selected and current_theme ~= original_theme then
+              M.load_theme(original_theme, true)
+            end
+          end,
+        })
+
+        return true
       end,
     })
     :find()
