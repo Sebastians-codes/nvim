@@ -7,44 +7,116 @@ M.transparency = {
   enabled = true,
   groups = {
     -- Core UI
-    'Normal', 'NormalFloat', 'SignColumn', 'StatusLine', 'StatusLineNC',
-    'TabLine', 'TabLineFill', 'TabLineSel', 'ColorColumn', 'CursorLine',
-    'CursorColumn', 'Pmenu', 'PmenuSbar', 'PmenuSel', 'PmenuThumb',
-    'Folded', 'FoldColumn', 'LineNr', 'CursorLineNr', 'CursorLineSign', 'CursorLineFold',
+    'Normal',
+    'NormalFloat',
+    'SignColumn',
+    'StatusLine',
+    'StatusLineNC',
+    'TabLine',
+    'TabLineFill',
+    'TabLineSel',
+    'ColorColumn',
+    'CursorLine',
+    'CursorColumn',
+    'Pmenu',
+    'PmenuSbar',
+    'PmenuSel',
+    'PmenuThumb',
+    'Folded',
+    'FoldColumn',
+    'LineNr',
+    'CursorLineNr',
+    'CursorLineSign',
+    'CursorLineFold',
 
     -- Telescope (comprehensive)
-    'TelescopeNormal', 'TelescopeBorder', 'TelescopePromptNormal',
-    'TelescopePromptBorder', 'TelescopeResultsNormal', 'TelescopeResultsBorder',
-    'TelescopePreviewNormal', 'TelescopePreviewBorder', 'TelescopeTitle',
-    'TelescopePromptTitle', 'TelescopePreviewTitle', 'TelescopeResultsTitle',
-    'TelescopeSelection', 'TelescopeSelectionCaret', 'TelescopeMatching',
-    'TelescopeMultiSelection', 'TelescopeMultiIcon', 'TelescopePreviewMessage',
-    'TelescopePreviewMessageFillchar', 'TelescopePreviewSticky', 'TelescopePreviewCharDev',
-    'TelescopePreviewDirectory', 'TelescopePreviewBlock', 'TelescopePreviewLink',
-    'TelescopePreviewSocket', 'TelescopePreviewRead', 'TelescopePreviewWrite',
-    'TelescopePreviewExecute', 'TelescopePreviewHyphen', 'TelescopePreviewPipe',
-    'TelescopePreviewLine', 'TelescopePreviewMatch', 'TelescopePreviewGroup',
+    'TelescopeNormal',
+    'TelescopeBorder',
+    'TelescopePromptNormal',
+    'TelescopePromptBorder',
+    'TelescopeResultsNormal',
+    'TelescopeResultsBorder',
+    'TelescopePreviewNormal',
+    'TelescopePreviewBorder',
+    'TelescopeTitle',
+    'TelescopePromptTitle',
+    'TelescopePreviewTitle',
+    'TelescopeResultsTitle',
+    'TelescopeSelection',
+    'TelescopeSelectionCaret',
+    'TelescopeMatching',
+    'TelescopeMultiSelection',
+    'TelescopeMultiIcon',
+    'TelescopePreviewMessage',
+    'TelescopePreviewMessageFillchar',
+    'TelescopePreviewSticky',
+    'TelescopePreviewCharDev',
+    'TelescopePreviewDirectory',
+    'TelescopePreviewBlock',
+    'TelescopePreviewLink',
+    'TelescopePreviewSocket',
+    'TelescopePreviewRead',
+    'TelescopePreviewWrite',
+    'TelescopePreviewExecute',
+    'TelescopePreviewHyphen',
+    'TelescopePreviewPipe',
+    'TelescopePreviewLine',
+    'TelescopePreviewMatch',
+    'TelescopePreviewGroup',
 
     -- WhichKey (comprehensive)
-    'WhichKeyFloat', 'FloatBorder', 'WhichKeyNormal', 'WhichKeyBorder',
-    'WhichKey', 'WhichKeyGroup', 'WhichKeyDesc', 'WhichKeySeparator',
-    'WhichKeyValue', 'WhichKeyIcon', 'WhichKeyIconGrey',
+    'WhichKeyFloat',
+    'FloatBorder',
+    'WhichKeyNormal',
+    'WhichKeyBorder',
+    'WhichKey',
+    'WhichKeyGroup',
+    'WhichKeyDesc',
+    'WhichKeySeparator',
+    'WhichKeyValue',
+    'WhichKeyIcon',
+    'WhichKeyIconGrey',
 
     -- Other plugins
-    'MiniStatuslineModeReplace', 'MiniStatuslineModeCommand', 'MiniStatuslineModeOther',
-    'MiniStatuslineDevinfo', 'MiniStatuslineFilename', 'MiniStatuslineFileinfo',
-    'MiniStatuslineInactive', 'NvimTreeNormal', 'NvimTreeStatuslineNc',
-    'BufferLineFill', 'BufferLineBackground', 'BufferLineBuffer',
-    'BufferLineTab', 'BufferLineTabSelected', 'BufferLineTabClose',
-    'LualineNormal', 'LualineInactive', 'LualineInsert', 'LualineVisual',
-    'LualineReplace', 'LualineCommand', 'LualineTerminal',
-    'GitSignsAdd', 'GitSignsChange', 'GitSignsDelete',
-    'DiagnosticFloatingError', 'DiagnosticFloatingWarn', 'DiagnosticFloatingInfo', 'DiagnosticFloatingHint',
+    'MiniStatuslineModeReplace',
+    'MiniStatuslineModeCommand',
+    'MiniStatuslineModeOther',
+    'MiniStatuslineDevinfo',
+    'MiniStatuslineFilename',
+    'MiniStatuslineFileinfo',
+    'MiniStatuslineInactive',
+    'NvimTreeNormal',
+    'NvimTreeStatuslineNc',
+    'BufferLineFill',
+    'BufferLineBackground',
+    'BufferLineBuffer',
+    'BufferLineTab',
+    'BufferLineTabSelected',
+    'BufferLineTabClose',
+    'LualineNormal',
+    'LualineInactive',
+    'LualineInsert',
+    'LualineVisual',
+    'LualineReplace',
+    'LualineCommand',
+    'LualineTerminal',
+    'GitSignsAdd',
+    'GitSignsChange',
+    'GitSignsDelete',
+    'DiagnosticFloatingError',
+    'DiagnosticFloatingWarn',
+    'DiagnosticFloatingInfo',
+    'DiagnosticFloatingHint',
 
     -- Generic floating windows and popups
-    'NormalNC', 'MsgArea', 'MsgSeparator',
-    'EndOfBuffer', 'QuickFixLine', 'qfSeparator', 'WildMenu',
-  }
+    'NormalNC',
+    'MsgArea',
+    'MsgSeparator',
+    'EndOfBuffer',
+    'QuickFixLine',
+    'qfSeparator',
+    'WildMenu',
+  },
 }
 
 M.themes = {
@@ -179,20 +251,20 @@ function M.load_theme(theme_name, silent)
   M.themes[theme_name]()
 
   -- Apply transparency if enabled
-    if M.transparency.enabled then
-      for _, group in ipairs(M.transparency.groups) do
-        vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
-      end
-      vim.opt.fillchars:append({ eob = ' ' })
+  if M.transparency.enabled then
+    for _, group in ipairs(M.transparency.groups) do
+      vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
     end
+    vim.opt.fillchars:append { eob = ' ' }
+  end
 
-    if not M.transparency.enabled then
-      vim.opt.fillchars:append({ eob = '~' })
-    end
+  if not M.transparency.enabled then
+    vim.opt.fillchars:append { eob = '~' }
+  end
 
   local file = io.open(state_file, 'w')
   if file then
-    file:write(vim.json.encode({theme = theme_name, transparent = M.transparency.enabled}))
+    file:write(vim.json.encode { theme = theme_name, transparent = M.transparency.enabled })
     file:close()
   else
     if not silent then
@@ -238,13 +310,13 @@ function M.toggle_transparency()
       for _, group in ipairs(M.transparency.groups) do
         vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
       end
-      vim.opt.fillchars:append({ eob = ' ' })
+      vim.opt.fillchars:append { eob = ' ' }
     end
   end
 
   local file = io.open(state_file, 'w')
   if file then
-    file:write(vim.json.encode({theme = current_theme, transparent = M.transparency.enabled}))
+    file:write(vim.json.encode { theme = current_theme, transparent = M.transparency.enabled })
     file:close()
   else
     vim.notify('Failed to save theme state', vim.log.levels.ERROR)
@@ -261,29 +333,29 @@ function M.show_theme_picker()
   local actions = require 'telescope.actions'
   local action_state = require 'telescope.actions.state'
 
-   local current_theme = M.get_saved_theme()
-   local original_theme = current_theme -- Store for restoration
-   local selected = false -- Flag to track if user made a selection
-   local theme_list = {}
-   local theme_names = {}
-   for name, _ in pairs(M.themes) do
-     table.insert(theme_names, name)
-   end
-   table.sort(theme_names)
-   for _, name in ipairs(theme_names) do
-     local display = name
-     if name == current_theme then
-       display = display .. " [Current]"
-     end
-     if name == "myrarch" or name == "mygawa" or name == "sakurai" or name == "rose_pine" then
-       display = display .. " (Custom)"
-     end
-     table.insert(theme_list, { display = display, value = name })
-   end
+  local current_theme = M.get_saved_theme()
+  local original_theme = current_theme -- Store for restoration
+  local selected = false -- Flag to track if user made a selection
+  local theme_list = {}
+  local theme_names = {}
+  for name, _ in pairs(M.themes) do
+    table.insert(theme_names, name)
+  end
+  table.sort(theme_names)
+  for _, name in ipairs(theme_names) do
+    local display = name
+    if name == current_theme then
+      display = display .. ' [Current]'
+    end
+    if name == 'myrarch' or name == 'mygawa' or name == 'sakurai' or name == 'rose_pine' then
+      display = display .. ' (Custom)'
+    end
+    table.insert(theme_list, { display = display, value = name })
+  end
   -- Add index numbers to display
   for i, theme in ipairs(theme_list) do
     theme.index = i
-    theme.display = string.format("%2d. %s", i, theme.display)
+    theme.display = string.format('%2d. %s', i, theme.display)
   end
 
   -- Live preview function
@@ -304,13 +376,13 @@ function M.show_theme_picker()
           return {
             value = entry.value,
             display = entry.display,
-            ordinal = string.format("%02d", entry.index or 1) .. " " .. entry.value, -- Search by index (01,10) or name
-            path = vim.fn.stdpath('config') .. '/init.lua', -- Preview sample file
+            ordinal = string.format('%02d', entry.index or 1) .. ' ' .. entry.value, -- Search by index (01,10) or name
+            path = vim.fn.stdpath 'config' .. '/init.lua', -- Preview sample file
           }
         end,
       },
       sorter = conf.generic_sorter {},
-      previewer = conf.file_previewer({}),
+      previewer = conf.file_previewer {},
       attach_mappings = function(prompt_bufnr, map)
         -- Load first theme on open
         if #theme_list > 0 then
