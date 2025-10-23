@@ -7,6 +7,7 @@ A custom Neovim configuration featuring the MyGawa theme (inspired by Kanagawa W
 ![Screenshot 1](assets/screenshot-1.png)
 ![Screenshot 2](assets/screenshot-2.png)
 ![Screenshot 3](assets/screenshot-3.png)
+![Screenshot 4](assets/screenshot-4.png)
 
 ## Features
 
@@ -62,7 +63,7 @@ Lazy.nvim will automatically install all plugins on first launch.
 
 ## Theme
 
-The configuration uses a custom MyGawa theme with:
+The configuration includes over 30+ themes, including a custom MyGawa theme with:
 - Transparent backgrounds throughout
 - Kanagawa Wave-inspired colors
 - Matching GitUI theme and keybindings available in `extras/`
@@ -140,6 +141,10 @@ cp ~/.config/nvim/extras/gitui-keybindings.ron ~/.config/gitui/key_bindings.ron
 ### Terminal
 - `<Esc><Esc>`: Exit terminal mode
 
+### Theme
+- `<leader>tt`: Open theme picker
+- `<leader>ts`: Toggle transparency
+
 ### Telescope (Fuzzy Finder)
 - `<leader>sh`: Search help
 - `<leader>sk`: Search keymaps
@@ -189,14 +194,32 @@ cp ~/.config/nvim/extras/gitui-keybindings.ron ~/.config/gitui/key_bindings.ron
 │   ├── config/              # Core configuration
 │   │   ├── autocmds.lua
 │   │   ├── keymaps.lua
+│   │   ├── lazy.lua
+│   │   ├── oil.lua
 │   │   ├── options.lua
-│   │   └── session_manager.lua
+│   │   ├── project-diagnostics.lua
+│   │   ├── session_manager.lua
+│   │   └── startup_sessions.lua
 │   ├── plugins/             # Plugin configurations
-│   │   ├── mygawa.lua       # Custom theme
+│   │   ├── core.lua
 │   │   ├── lsp.lua
 │   │   ├── telescope.lua
-│   │   └── ...
+│   │   ├── theme.lua
+│   │   └── ... (30+ plugin configs)
+│   ├── themes/              # Theme configurations
+│   │   ├── manager.lua      # Theme manager
+│   │   └── ... (30+ theme files)
 │   └── snippets/            # Custom snippets
+│       ├── cs.lua
+│       ├── go.lua
+│       ├── javascriptreact.lua
+│       ├── rust.lua
+│       ├── svelte.lua
+│       └── typescriptreact.lua
+├── snippets/                # Symlink to lua/snippets/
+├── assets/                  # Screenshots
+├── doc/                     # Documentation
+├── extras/                  # Extra configs (GitUI theme)
 └── README.md
 ```
 
