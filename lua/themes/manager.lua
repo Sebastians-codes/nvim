@@ -377,7 +377,7 @@ function M.show_theme_picker()
             value = entry.value,
             display = entry.display,
             ordinal = string.format('%02d', entry.index or 1) .. ' ' .. entry.value, -- Search by index (01,10) or name
-            path = vim.fn.stdpath 'config' .. '/init.lua', -- Preview sample file
+            path = vim.fn.stdpath 'config' .. '/sample.rs', -- Preview sample file
           }
         end,
       },
