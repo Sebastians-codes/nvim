@@ -74,6 +74,11 @@ cp ~/.config/nvim/extras/gitui-theme.ron ~/.config/gitui/theme.ron
 cp ~/.config/nvim/extras/gitui-keybindings.ron ~/.config/gitui/key_bindings.ron
 ```
 
+To use the Kanagawa transparent theme for OpenCode:
+```bash
+cp ~/.config/nvim/extras/kanagawa-transparent.json ~/.config/opencode/themes/kanagawa-transparent.json
+```
+
 ### Colors
 
 - Background: Transparent
