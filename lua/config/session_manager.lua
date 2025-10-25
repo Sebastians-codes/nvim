@@ -90,7 +90,7 @@ local function telescope_input(prompt_title, default_value, callback)
         attach_mappings = function(prompt_bufnr, map)
           actions.select_default:replace(function()
             local prompt_text = action_state.get_current_line()
-            actions.close(prompt_bufnr)
+            pcall(actions.close, prompt_bufnr)
 
             if prompt_text and prompt_text ~= '' then
               callback(prompt_text)
@@ -648,7 +648,7 @@ local function create_session_picker()
                 end
               end
             end
-            actions.close(prompt_bufnr)
+            pcall(actions.close, prompt_bufnr)
           end)
 
           -- Delete action (dd)
@@ -670,7 +670,7 @@ local function create_session_picker()
               delete_session_file(value.session.name)
               vim.notify('Deleted session ' .. value.session.name)
             end
-            actions.close(prompt_bufnr)
+            pcall(actions.close, prompt_bufnr)
             vim.defer_fn(function()
               M.manage_slots()
             end, 100)
@@ -689,7 +689,7 @@ local function create_session_picker()
             elseif value.type == 'session' then
               rename_session_interactive(value.session.name)
             end
-            actions.close(prompt_bufnr)
+            pcall(actions.close, prompt_bufnr)
           end)
 
           -- Assign action (s)
@@ -705,7 +705,7 @@ local function create_session_picker()
             elseif value.type == 'session' then
               assign_session_to_slot(value.session.name)
             end
-            actions.close(prompt_bufnr)
+            pcall(actions.close, prompt_bufnr)
           end)
 
           -- New session action (n)
@@ -713,7 +713,7 @@ local function create_session_picker()
             local selection = action_state.get_selected_entry()
             if selection and type(selection.value) == 'table' and selection.value.type == 'slot' then
               handle_new_session(selection.value.slot)
-              actions.close(prompt_bufnr)
+              pcall(actions.close, prompt_bufnr)
             end
           end)
 
@@ -722,7 +722,7 @@ local function create_session_picker()
             local selection = action_state.get_selected_entry()
             if selection and type(selection.value) == 'table' and selection.value.type == 'slot' and selection.value.session then
               swap_prompt(selection.value.slot)
-              actions.close(prompt_bufnr)
+              pcall(actions.close, prompt_bufnr)
             end
           end)
 
@@ -795,7 +795,7 @@ function M.assign_slot_to_session(slot)
             end
 
             local choice = selection.value
-            actions.close(prompt_bufnr)
+            pcall(actions.close, prompt_bufnr)
 
             if choice.action == 'new' then
               handle_new_session(slot)
@@ -864,7 +864,7 @@ function M.assign_slot()
             end
 
             local slot = selection.value
-            actions.close(prompt_bufnr)
+            pcall(actions.close, prompt_bufnr)
 
             M.assign_slot_to_session(slot)
           end)
@@ -979,7 +979,7 @@ function M.save_and_quit()
               end
 
               local choice = selection.value
-              actions.close(prompt_bufnr)
+              pcall(actions.close, prompt_bufnr)
 
               if choice.action == 'save_new' then
                 telescope_input('Enter Session Name', nil, function(input)
