@@ -51,6 +51,63 @@ local function read_file(path)
   return table.concat(lines, '\n')
 end
 
+local function telescope_input(prompt_title, default_value, callback)
+  local pickers = require 'telescope.pickers'
+  local finders = require 'telescope.finders'
+  local conf = require('telescope.config').values
+  local actions = require 'telescope.actions'
+  local action_state = require 'telescope.actions.state'
+
+  local input_entries = {
+    {
+      display = default_value and ('Default: ' .. default_value) or 'Type and press Enter...',
+      value = 'input_prompt',
+      ordinal = 'input_prompt',
+    },
+  }
+
+  pickers
+    .new(
+      require('telescope.themes').get_dropdown {
+        layout_config = {
+          width = 0.5,
+          height = 0.2,
+        },
+      },
+      {
+        prompt_title = prompt_title,
+        finder = finders.new_table {
+          results = input_entries,
+          entry_maker = function(entry)
+            return {
+              value = entry.value,
+              display = entry.display,
+              ordinal = entry.ordinal,
+            }
+          end,
+        },
+        sorter = conf.generic_sorter {},
+        attach_mappings = function(prompt_bufnr, map)
+          actions.select_default:replace(function()
+            local prompt_text = action_state.get_current_line()
+            actions.close(prompt_bufnr)
+
+            if prompt_text and prompt_text ~= '' then
+              callback(prompt_text)
+            elseif default_value then
+              callback(default_value)
+            else
+              callback(nil)
+            end
+          end)
+
+          return true
+        end,
+      }
+    )
+    :find()
+end
+
 local function write_file(path, content)
   vim.fn.mkdir(vim.fn.fnamemodify(path, ':h'), 'p')
   return pcall(vim.fn.writefile, { content }, path)
@@ -63,8 +120,6 @@ local manager_state = {
   win = nil,
   lookup = {},
 }
-
-local render_manager
 
 local function reload_harpoon_data()
   local ok, harpoon = pcall(require, 'harpoon')
@@ -137,9 +192,7 @@ local function write_all_buffers()
 end
 
 local function refresh_manager_view()
-  if manager_state.win and vim.api.nvim_win_is_valid(manager_state.win) then
-    render_manager()
-  end
+  -- Not needed with Telescope implementation
 end
 
 local function format_slot(slot)
@@ -252,10 +305,7 @@ local function rename_session_interactive(session_name, opts)
     return
   end
 
-  vim.ui.input({
-    prompt = 'Rename session ' .. session_name .. ' to: ',
-    default = session_name:gsub('%.vim$', ''),
-  }, function(input)
+  telescope_input('Rename Session', session_name:gsub('%.vim$', ''), function(input)
     local new_name = normalize_session_name(input)
     if not new_name or new_name == session_name then
       return
@@ -299,17 +349,6 @@ local function rename_session_interactive(session_name, opts)
   end)
 end
 
-local function rename_slot(slot)
-  ensure_slots()
-  local session_name = slots_cache[slot]
-  if not session_name then
-    vim.notify('No session assigned to slot ' .. format_slot(slot), vim.log.levels.WARN)
-    return
-  end
-
-  rename_session_interactive(session_name)
-end
-
 local function swap_prompt(slot)
   ensure_slots()
   if not slots_cache[slot] then
@@ -342,7 +381,7 @@ local function swap_prompt(slot)
 end
 
 local function handle_new_session(slot)
-  vim.ui.input({ prompt = 'Session name (without .vim): ' }, function(raw_name)
+  telescope_input('New Session Name', nil, function(raw_name)
     local session_name = normalize_session_name(raw_name)
     if not session_name then
       return
@@ -441,26 +480,6 @@ local function collect_session_metadata()
   return sessions
 end
 
-local function close_manager_window()
-  if manager_state.win and vim.api.nvim_win_is_valid(manager_state.win) then
-    vim.api.nvim_win_close(manager_state.win, true)
-  end
-  if manager_state.buf and vim.api.nvim_buf_is_valid(manager_state.buf) then
-    vim.api.nvim_buf_delete(manager_state.buf, { force = true })
-  end
-  manager_state.buf = nil
-  manager_state.win = nil
-  manager_state.lookup = {}
-end
-
-local function get_current_entry()
-  if not (manager_state.win and vim.api.nvim_win_is_valid(manager_state.win)) then
-    return nil
-  end
-  local cursor = vim.api.nvim_win_get_cursor(manager_state.win)
-  return manager_state.lookup[cursor[1]], cursor[1]
-end
-
 local function delete_session_file(session_name)
   ensure_slots()
   local path, kind = get_session_info(session_name)
@@ -502,9 +521,7 @@ local function delete_session_file(session_name)
 end
 
 local function assign_session_to_slot(session_name)
-  vim.ui.input({
-    prompt = ('Assign %s to slot (1-9,0 for 10): '):format(session_name),
-  }, function(slot)
+  telescope_input(string.format('Assign %s to Slot', session_name), nil, function(slot)
     if not slot then
       return
     end
@@ -520,237 +537,343 @@ local function assign_session_to_slot(session_name)
   end)
 end
 
-local function manual_refresh()
-  render_manager()
-end
+local function create_session_picker()
+  local pickers = require 'telescope.pickers'
+  local finders = require 'telescope.finders'
+  local conf = require('telescope.config').values
+  local actions = require 'telescope.actions'
+  local action_state = require 'telescope.actions.state'
 
-local function handle_enter()
-  local entry = get_current_entry()
-  if not entry then
-    return
-  end
-
-  if entry.type == 'slot' then
-    if entry.session then
-      M.load_slot(entry.slot)
-      close_manager_window()
-    else
-      prompt_for_session(entry.slot)
-    end
-    return
-  end
-
-  if entry.type == 'session' then
-    oil_config.ensure_loaded()
-    local MiniSessions = require 'mini.sessions'
-    local ok, err = pcall(MiniSessions.read, entry.session.name, { force = false })
-    if not ok then
-      vim.notify('Failed to load session: ' .. tostring(err), vim.log.levels.ERROR)
-    else
-      reload_harpoon_data()
-      close_manager_window()
-    end
-  end
-end
-
-local function handle_delete()
-  local entry = get_current_entry()
-  if not entry then
-    return
-  end
-
-  if entry.type == 'slot' then
-    if entry.session then
-      clear_slot(entry.slot)
-    else
-      vim.notify('Slot ' .. format_slot(entry.slot) .. ' is already empty.', vim.log.levels.WARN)
-    end
-    return
-  end
-
-  if entry.type == 'session' then
-    delete_session_file(entry.session.name)
-  end
-end
-
-local function handle_rename()
-  local entry = get_current_entry()
-  if not entry then
-    return
-  end
-
-  if entry.type == 'slot' and entry.session then
-    rename_session_interactive(entry.session)
-  elseif entry.type == 'session' then
-    rename_session_interactive(entry.session.name)
-  end
-end
-
-local function handle_assign()
-  local entry = get_current_entry()
-  if not entry then
-    return
-  end
-
-  if entry.type == 'slot' then
-    prompt_for_session(entry.slot)
-  elseif entry.type == 'session' then
-    assign_session_to_slot(entry.session.name)
-  end
-end
-
-local function handle_new_for_slot()
-  local entry = get_current_entry()
-  if entry and entry.type == 'slot' then
-    handle_new_session(entry.slot)
-  end
-end
-
-local function handle_swap()
-  local entry = get_current_entry()
-  if entry and entry.type == 'slot' and entry.session then
-    swap_prompt(entry.slot)
-  end
-end
-
-local function ensure_manager_buffer()
-  if manager_state.buf and vim.api.nvim_buf_is_valid(manager_state.buf) then
-    return manager_state.buf
-  end
-
-  local buf = vim.api.nvim_create_buf(false, true)
-  manager_state.buf = buf
-
-  vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
-  vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
-  vim.api.nvim_buf_set_option(buf, 'swapfile', false)
-  vim.api.nvim_buf_set_option(buf, 'modifiable', false)
-  vim.api.nvim_buf_set_option(buf, 'filetype', 'sessionmanager')
-
-  local function map(lhs, rhs)
-    vim.keymap.set('n', lhs, rhs, { buffer = buf, nowait = true, silent = true })
-  end
-
-  map('q', close_manager_window)
-  map('<Esc>', close_manager_window)
-  map('<CR>', handle_enter)
-  map('dd', handle_delete)
-  map('r', handle_rename)
-  map('s', handle_assign)
-  map('n', handle_new_for_slot)
-  map('S', handle_swap)
-  map('R', manual_refresh)
-
-  return buf
-end
-
-render_manager = function()
-  local buf = ensure_manager_buffer()
   ensure_slots()
-
   local sessions = collect_session_metadata()
-  local lines = {}
-  local lookup = {}
 
-  local function add_line(text, meta)
-    table.insert(lines, text)
-    if meta then
-      lookup[#lines] = meta
-    end
-  end
+  local entries = {}
 
-  add_line 'Session Manager'
-  add_line 'ENTER load  dd delete/clear  r rename  s assign  n new  S swap  q close'
-  add_line ''
+  table.insert(entries, {
+    display = 'Enter Load  dd Delete  r Rename  s Assign  n New  S Swap',
+    value = 'header',
+    ordinal = '000_header',
+  })
 
-  add_line 'Slots:'
+  table.insert(entries, {
+    display = 'Slots --------------------------------------',
+    value = 'slots_header',
+    ordinal = '001_slots_header',
+  })
+
   for _, slot in ipairs(slot_keys) do
     local name = slots_cache and slots_cache[slot] or nil
-    local display = name or '<empty>'
-    add_line(string.format(' %2s │ %s', format_slot(slot), display), {
-      type = 'slot',
-      slot = slot,
-      session = name,
+    local icon = name and '[X]' or '[ ]'
+    local display_name = name or '<empty>'
+    table.insert(entries, {
+      display = string.format('  %s %s %s', icon, format_slot(slot), display_name),
+      value = { type = 'slot', slot = slot, session = name },
+      ordinal = string.format('002_slot_%s_%s', slot, name or 'empty'),
     })
   end
 
-  add_line ''
-  add_line 'Sessions:'
+  table.insert(entries, {
+    display = 'Sessions ------------------------------------',
+    value = 'sessions_header',
+    ordinal = '003_sessions_header',
+  })
+
   if #sessions == 0 then
-    add_line '  <no sessions found>'
+    table.insert(entries, {
+      display = '  <no sessions found>',
+      value = 'no_sessions',
+      ordinal = '004_no_sessions',
+    })
   else
     for _, session in ipairs(sessions) do
       local slot_labels = {}
       for _, slot in ipairs(session.slots) do
         table.insert(slot_labels, slot.label)
       end
-      local slot_suffix = ''
-      if #slot_labels > 0 then
-        slot_suffix = ' [slots ' .. table.concat(slot_labels, ',') .. ']'
-      end
-      add_line(string.format(' %s%s (%s)', session.name, slot_suffix, session.kind), {
-        type = 'session',
-        session = session,
+      local slot_info = #slot_labels > 0 and string.format(' [%s]', table.concat(slot_labels, ',')) or ''
+      local kind_icon = session.kind == 'local' and '(L)' or '(G)'
+      local display = string.format('  %s %s%s %s %s', kind_icon, session.name, slot_info, kind_icon, session.kind)
+      table.insert(entries, {
+        display = display,
+        value = { type = 'session', session = session },
+        ordinal = string.format('005_session_%s_%s', session.kind, session.name),
       })
     end
   end
 
-  local prev_cursor
-  if manager_state.win and vim.api.nvim_win_is_valid(manager_state.win) then
-    prev_cursor = vim.api.nvim_win_get_cursor(manager_state.win)
-  end
+  pickers
+    .new(
+      require('telescope.themes').get_dropdown {
+        layout_config = {
+          width = 0.5,
+          height = 0.4,
+        },
+      },
+      {
+        prompt_title = 'Session Manager',
+        finder = finders.new_table {
+          results = entries,
+          entry_maker = function(entry)
+            return {
+              value = entry.value,
+              display = entry.display,
+              ordinal = entry.ordinal,
+            }
+          end,
+        },
+        sorter = conf.generic_sorter {},
+        attach_mappings = function(prompt_bufnr, map)
+          actions.select_default:replace(function()
+            local selection = action_state.get_selected_entry()
+            if not selection then
+              return
+            end
 
-  vim.api.nvim_buf_set_option(buf, 'modifiable', true)
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-  vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+            local value = selection.value
+            if type(value) == 'table' then
+              if value.type == 'slot' then
+                if value.session then
+                  M.load_slot(value.slot)
+                else
+                  prompt_for_session(value.slot)
+                end
+              elseif value.type == 'session' then
+                oil_config.ensure_loaded()
+                local MiniSessions = require 'mini.sessions'
+                local ok, err = pcall(MiniSessions.read, value.session.name, { force = false })
+                if not ok then
+                  vim.notify('Failed to load session: ' .. tostring(err), vim.log.levels.ERROR)
+                else
+                  reload_harpoon_data()
+                end
+              end
+            end
+            actions.close(prompt_bufnr)
+          end)
 
-  manager_state.lookup = lookup
+          -- Delete action (dd)
+          map('n', 'dd', function()
+            local selection = action_state.get_selected_entry()
+            if not selection or type(selection.value) ~= 'table' then
+              return
+            end
 
-  if manager_state.win and vim.api.nvim_win_is_valid(manager_state.win) then
-    local total_lines = #lines
-    local target_line = prev_cursor and math.min(prev_cursor[1], total_lines) or 1
-    vim.api.nvim_win_set_cursor(manager_state.win, { target_line, 0 })
+            local value = selection.value
+            if value.type == 'slot' then
+              if value.session then
+                clear_slot(value.slot)
+                vim.notify('Cleared session slot ' .. format_slot(value.slot))
+              else
+                vim.notify('Slot ' .. format_slot(value.slot) .. ' is already empty.', vim.log.levels.WARN)
+              end
+            elseif value.type == 'session' then
+              delete_session_file(value.session.name)
+              vim.notify('Deleted session ' .. value.session.name)
+            end
+            actions.close(prompt_bufnr)
+            vim.defer_fn(function()
+              M.manage_slots()
+            end, 100)
+          end)
 
-    local max_width = 0
-    for _, line in ipairs(lines) do
-      local width = vim.fn.strdisplaywidth(line)
-      if width > max_width then
-        max_width = width
-      end
-    end
+          -- Rename action (r)
+          map('n', 'r', function()
+            local selection = action_state.get_selected_entry()
+            if not selection or type(selection.value) ~= 'table' then
+              return
+            end
 
-    local height = math.min(total_lines, math.max(10, math.floor(vim.o.lines * 0.6)))
-    local width = math.min(math.max(40, max_width + 2), math.floor(vim.o.columns * 0.7))
-    local row = math.floor((vim.o.lines - height) / 2)
-    local col = math.floor((vim.o.columns - width) / 2)
+            local value = selection.value
+            if value.type == 'slot' and value.session then
+              rename_session_interactive(value.session)
+            elseif value.type == 'session' then
+              rename_session_interactive(value.session.name)
+            end
+            actions.close(prompt_bufnr)
+          end)
 
-    vim.api.nvim_win_set_config(manager_state.win, {
-      relative = 'editor',
-      style = 'minimal',
-      border = 'rounded',
-      width = width,
-      height = height,
-      row = row,
-      col = col,
+          -- Assign action (s)
+          map('n', 's', function()
+            local selection = action_state.get_selected_entry()
+            if not selection or type(selection.value) ~= 'table' then
+              return
+            end
+
+            local value = selection.value
+            if value.type == 'slot' then
+              prompt_for_session(value.slot)
+            elseif value.type == 'session' then
+              assign_session_to_slot(value.session.name)
+            end
+            actions.close(prompt_bufnr)
+          end)
+
+          -- New session action (n)
+          map('n', 'n', function()
+            local selection = action_state.get_selected_entry()
+            if selection and type(selection.value) == 'table' and selection.value.type == 'slot' then
+              handle_new_session(selection.value.slot)
+              actions.close(prompt_bufnr)
+            end
+          end)
+
+          -- Swap action (S)
+          map('n', 'S', function()
+            local selection = action_state.get_selected_entry()
+            if selection and type(selection.value) == 'table' and selection.value.type == 'slot' and selection.value.session then
+              swap_prompt(selection.value.slot)
+              actions.close(prompt_bufnr)
+            end
+          end)
+
+          return true
+        end,
+      }
+    )
+    :find()
+end
+
+function M.assign_slot_to_session(slot)
+  local pickers = require 'telescope.pickers'
+  local finders = require 'telescope.finders'
+  local conf = require('telescope.config').values
+  local actions = require 'telescope.actions'
+  local action_state = require 'telescope.actions.state'
+
+  local sessions = list_sessions()
+
+  local session_entries = {
+    {
+      display = 'Save current state as new session',
+      value = { action = 'new' },
+      ordinal = 'new_session',
+    },
+  }
+
+  for _, name in ipairs(sessions) do
+    local path, kind = get_session_info(name)
+    local kind_icon = kind == 'local' and '(L)' or '(G)'
+    table.insert(session_entries, {
+      display = string.format('%s %s %s %s', kind_icon, name, kind_icon, kind),
+      value = { action = 'existing', session = name },
+      ordinal = string.format('session_%s_%s', kind, name),
     })
   end
+
+  table.insert(session_entries, {
+    display = 'Clear slot',
+    value = { action = 'clear' },
+    ordinal = 'clear_slot',
+  })
+
+  pickers
+    .new(
+      require('telescope.themes').get_dropdown {
+        layout_config = {
+          width = 0.5,
+          height = 0.4,
+        },
+      },
+      {
+        prompt_title = string.format('Assign Session to Slot %s', format_slot(slot)),
+        finder = finders.new_table {
+          results = session_entries,
+          entry_maker = function(entry)
+            return {
+              value = entry.value,
+              display = entry.display,
+              ordinal = entry.ordinal,
+            }
+          end,
+        },
+        sorter = conf.generic_sorter {},
+        attach_mappings = function(prompt_bufnr, map)
+          actions.select_default:replace(function()
+            local selection = action_state.get_selected_entry()
+            if not selection then
+              return
+            end
+
+            local choice = selection.value
+            actions.close(prompt_bufnr)
+
+            if choice.action == 'new' then
+              handle_new_session(slot)
+            elseif choice.action == 'existing' then
+              handle_assign_existing(slot, choice.session)
+            elseif choice.action == 'clear' then
+              clear_slot(slot)
+            end
+          end)
+
+          return true
+        end,
+      }
+    )
+    :find()
 end
 
 function M.assign_slot()
-  vim.ui.input({ prompt = 'Assign session to slot (1-9,0 for 10): ' }, function(slot)
-    if not slot then
-      return
-    end
-    slot = vim.trim(slot)
-    if slot == '10' then
-      slot = '0'
-    end
-    if not vim.tbl_contains(slot_keys, slot) then
-      vim.notify('Invalid slot: ' .. slot, vim.log.levels.ERROR)
-      return
-    end
-    prompt_for_session(slot)
-  end)
+  local pickers = require 'telescope.pickers'
+  local finders = require 'telescope.finders'
+  local conf = require('telescope.config').values
+  local actions = require 'telescope.actions'
+  local action_state = require 'telescope.actions.state'
+
+  ensure_slots()
+
+  local slot_entries = {}
+  for _, slot in ipairs(slot_keys) do
+    local name = slots_cache and slots_cache[slot] or nil
+    local icon = name and '[X]' or '[ ]'
+    local display_name = name or '<empty>'
+    local status = name and ' (assigned)' or ' (empty)'
+    table.insert(slot_entries, {
+      display = string.format('%s %s %s%s', icon, format_slot(slot), display_name, status),
+      value = slot,
+      ordinal = string.format('slot_%s_%s', slot, name or 'empty'),
+    })
+  end
+
+  pickers
+    .new(
+      require('telescope.themes').get_dropdown {
+        layout_config = {
+          width = 0.4,
+          height = 0.3,
+        },
+      },
+      {
+        prompt_title = 'Select Slot to Assign',
+        finder = finders.new_table {
+          results = slot_entries,
+          entry_maker = function(entry)
+            return {
+              value = entry.value,
+              display = entry.display,
+              ordinal = entry.ordinal,
+            }
+          end,
+        },
+        sorter = conf.generic_sorter {},
+        attach_mappings = function(prompt_bufnr, map)
+          actions.select_default:replace(function()
+            local selection = action_state.get_selected_entry()
+            if not selection then
+              return
+            end
+
+            local slot = selection.value
+            actions.close(prompt_bufnr)
+
+            M.assign_slot_to_session(slot)
+          end)
+
+          return true
+        end,
+      }
+    )
+    :find()
 end
 
 function M.load_slot(slot)
@@ -781,33 +904,7 @@ function M.load_slot(slot)
 end
 
 function M.manage_slots()
-  local buf = ensure_manager_buffer()
-
-  if manager_state.win and vim.api.nvim_win_is_valid(manager_state.win) then
-    vim.api.nvim_set_current_win(manager_state.win)
-    render_manager()
-    return
-  end
-
-  local max_width = math.max(40, vim.o.columns - 6)
-  local width = math.min(math.max(50, math.floor(vim.o.columns * 0.5)), max_width)
-  local max_height = math.max(12, vim.o.lines - 6)
-  local height = math.min(math.max(12, #slot_keys + 8), math.floor(vim.o.lines * 0.7), max_height)
-  local row = math.floor((vim.o.lines - height) / 2)
-  local col = math.floor((vim.o.columns - width) / 2)
-
-  manager_state.win = vim.api.nvim_open_win(buf, true, {
-    relative = 'editor',
-    style = 'minimal',
-    border = 'rounded',
-    width = width,
-    height = height,
-    row = row,
-    col = col,
-  })
-
-  vim.api.nvim_win_set_option(manager_state.win, 'winhl', 'Normal:NormalFloat,FloatBorder:FloatBorder')
-  render_manager()
+  create_session_picker()
 end
 
 local function quit_all_safely()
@@ -830,36 +927,99 @@ function M.save_and_quit()
       return
     end
     refresh_manager_view()
+    vim.notify 'Updated current session and quitting'
     quit_all_safely()
-    return
+  else
+    local pickers = require 'telescope.pickers'
+    local finders = require 'telescope.finders'
+    local conf = require('telescope.config').values
+    local actions = require 'telescope.actions'
+    local action_state = require 'telescope.actions.state'
+
+    local save_entries = {}
+
+    table.insert(save_entries, {
+      display = 'Save as new session...',
+      value = { action = 'save_new' },
+      ordinal = 'save_new',
+    })
+
+    table.insert(save_entries, {
+      display = 'Quit without saving',
+      value = { action = 'quit_only' },
+      ordinal = 'quit_only',
+    })
+
+    pickers
+      .new(
+        require('telescope.themes').get_dropdown {
+          layout_config = {
+            width = 0.5,
+            height = 0.3,
+          },
+        },
+        {
+          prompt_title = 'Save Session & Quit',
+          finder = finders.new_table {
+            results = save_entries,
+            entry_maker = function(entry)
+              return {
+                value = entry.value,
+                display = entry.display,
+                ordinal = entry.ordinal,
+              }
+            end,
+          },
+          sorter = conf.generic_sorter {},
+          attach_mappings = function(prompt_bufnr, map)
+            actions.select_default:replace(function()
+              local selection = action_state.get_selected_entry()
+              if not selection then
+                return
+              end
+
+              local choice = selection.value
+              actions.close(prompt_bufnr)
+
+              if choice.action == 'save_new' then
+                telescope_input('Enter Session Name', nil, function(input)
+                  local session_name = normalize_session_name(input)
+                  if not session_name then
+                    vim.notify('Invalid session name', vim.log.levels.ERROR)
+                    return
+                  end
+
+                  if not write_all_buffers() then
+                    return
+                  end
+
+                  sync_harpoon()
+                  local ok, err = pcall(MiniSessions.write, session_name, { force = true })
+                  if not ok then
+                    vim.notify('Failed to save session: ' .. tostring(err), vim.log.levels.ERROR)
+                    return
+                  end
+
+                  local path = get_session_info(session_name)
+                  if path then
+                    vim.v.this_session = path
+                  end
+                  sync_harpoon()
+                  refresh_manager_view()
+                  vim.notify('Saved session "' .. session_name .. '" and quitting')
+                  quit_all_safely()
+                end)
+              elseif choice.action == 'quit_only' then
+                quit_all_safely()
+              end
+            end)
+
+            return true
+          end,
+        }
+      )
+      :find()
   end
-
-  vim.ui.input({ prompt = 'Save session as (without .vim): ' }, function(input)
-    local session_name = normalize_session_name(input)
-    if not session_name then
-      return
-    end
-
-    if not write_all_buffers() then
-      return
-    end
-
-    sync_harpoon()
-    local ok, err = pcall(MiniSessions.write, session_name, { force = true })
-    if not ok then
-      vim.notify('Failed to save session: ' .. tostring(err), vim.log.levels.ERROR)
-      return
-    end
-
-    local path = get_session_info(session_name)
-    if path then
-      vim.v.this_session = path
-    end
-    sync_harpoon()
-    refresh_manager_view()
-    vim.notify('Saved session ' .. session_name .. ' and quitting')
-    quit_all_safely()
-  end)
 end
 
 pcall(vim.api.nvim_del_user_command, 'SessionSaveQuit')
