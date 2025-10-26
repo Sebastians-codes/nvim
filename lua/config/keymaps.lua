@@ -77,11 +77,7 @@ vim.keymap.set('i', '<CR>', function()
   end
 end, { expr = true })
 
--- Move lines up/down with Alt+J/K
-vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { desc = 'Move line down' })
-vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move line up' })
-vim.keymap.set('v', '<A-j>', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
-vim.keymap.set('v', '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
+
 
 -- Comment/uncomment lines with <leader>cc
 vim.keymap.set('n', '<leader>cc', function()

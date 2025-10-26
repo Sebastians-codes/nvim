@@ -3,6 +3,21 @@ return {
   config = function()
     require('mini.ai').setup { n_lines = 500 }
     require('mini.surround').setup()
+    require('mini.move').setup {
+      mappings = {
+        -- Move visual selection in Visual mode. Defaults are Alt (Meta) + hjkl.
+        left = '',
+        right = '',
+        down = '<A-j>',
+        up = '<A-k>',
+
+        -- Move current line in Normal mode
+        line_left = '',
+        line_right = '',
+        line_down = '<A-j>',
+        line_up = '<A-k>',
+      },
+    }
     require('mini.sessions').setup {
       autoread = false,
       autowrite = true,
