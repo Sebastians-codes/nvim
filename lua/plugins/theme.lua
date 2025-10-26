@@ -27,12 +27,10 @@ return {
   { 'cocopon/iceberg.vim', lazy = true },
   { 'jacoborus/tender.vim', lazy = true },
   { 'sainnhe/edge', lazy = true },
-
   { 'shaunsingh/nord.nvim', lazy = true },
-
   { 'EdenEast/nightfox.nvim', lazy = true },
-   { 'navarasu/onedark.nvim', lazy = true },
-   { 'rose-pine/neovim', name = 'rose-pine', lazy = true },
+  { 'navarasu/onedark.nvim', lazy = true },
+  { 'rose-pine/neovim', name = 'rose-pine', lazy = true },
   {
     name = 'theme-loader',
     dir = vim.fn.stdpath 'config',
