@@ -144,41 +144,6 @@ return {
       capabilities.general = capabilities.general or {}
       capabilities.general.positionEncodings = { 'utf-16' }
 
-      local function root_pattern(...)
-        local patterns = { ... }
-
-        return function(startpath)
-          if type(startpath) == 'number' then
-            startpath = vim.api.nvim_buf_get_name(startpath)
-          end
-          startpath = startpath or vim.api.nvim_buf_get_name(0)
-          if not startpath or startpath == '' then
-            return nil
-          end
-
-          if vim.fn.isdirectory(startpath) == 0 then
-            startpath = vim.fs.dirname(startpath)
-          end
-
-          local visited = nil
-          while startpath and startpath ~= '' and startpath ~= visited do
-            for _, pattern in ipairs(patterns) do
-              local globbed = vim.fn.glob(table.concat({ startpath, pattern }, '/'), true, true)
-              if type(globbed) == 'table' then
-                if next(globbed) then
-                  return startpath
-                end
-              elseif globbed ~= '' then
-                return startpath
-              end
-            end
-
-            visited = startpath
-            startpath = vim.fs.dirname(startpath)
-          end
-        end
-      end
-
       local servers = {
         rust_analyzer = {
           settings = {
