@@ -29,7 +29,7 @@ M.transparency = {
     'CursorLineSign',
     'CursorLineFold',
 
-    -- Telescope (comprehensive)
+    -- Telescope
     'TelescopeNormal',
     'TelescopeBorder',
     'TelescopePromptNormal',
@@ -64,7 +64,7 @@ M.transparency = {
     'TelescopePreviewMatch',
     'TelescopePreviewGroup',
 
-    -- WhichKey (comprehensive)
+    -- WhichKey
     'WhichKeyFloat',
     'FloatBorder',
     'WhichKeyNormal',
@@ -141,7 +141,6 @@ M.themes = {
   ['tokyonight-night'] = function()
     require('themes.tokyonight-night').setup()
   end,
-
   ['catppuccin-latte'] = function()
     require('themes.catppuccin-latte').setup()
   end,
@@ -217,7 +216,6 @@ M.themes = {
   ['gruvbox-material'] = function()
     require('themes.gruvbox-material').setup()
   end,
-
   iceberg = function()
     require('themes.iceberg').setup()
   end,
@@ -250,7 +248,6 @@ function M.load_theme(theme_name, silent)
 
   M.themes[theme_name]()
 
-  -- Apply transparency if enabled
   if M.transparency.enabled then
     for _, group in ipairs(M.transparency.groups) do
       vim.api.nvim_set_hl(0, group, { bg = 'NONE' })
@@ -302,7 +299,6 @@ end
 function M.toggle_transparency()
   M.transparency.enabled = not M.transparency.enabled
 
-  -- Reapply current theme with new transparency setting
   local current_theme = M.get_saved_theme()
   if M.themes[current_theme] then
     M.themes[current_theme]()
@@ -334,8 +330,8 @@ function M.show_theme_picker()
   local action_state = require 'telescope.actions.state'
 
   local current_theme = M.get_saved_theme()
-  local original_theme = current_theme -- Store for restoration
-  local selected = false -- Flag to track if user made a selection
+  local original_theme = current_theme
+  local selected = false
   local theme_list = {}
   local theme_names = {}
   for name, _ in pairs(M.themes) do
@@ -358,10 +354,8 @@ function M.show_theme_picker()
     theme.display = string.format('%2d. %s', i, theme.display)
   end
 
-  -- Live preview function
   local function preview_theme(entry)
     if entry and entry.value ~= current_theme then
-      -- Apply the preview theme
       M.load_theme(entry.value, true) -- Silent mode
       current_theme = entry.value
     end
