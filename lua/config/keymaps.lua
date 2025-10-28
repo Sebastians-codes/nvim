@@ -98,76 +98,11 @@ end, { desc = 'LSP Hover with border' })
 
 -- New file and directory creation
 vim.keymap.set('n', '<leader>nf', function()
-  local current_dir = vim.fn.expand '%:p:h'
-  if current_dir == '' then
-    current_dir = vim.fn.getcwd()
-  end
-
-  vim.ui.input({
-    prompt = 'New file name: ',
-    default = current_dir .. '/',
-    completion = 'file',
-  }, function(input)
-    if input then
-      local file_path = input
-      -- If it's not an absolute path, make it relative to current file's directory
-      if not vim.startswith(file_path, '/') then
-        file_path = current_dir .. '/' .. file_path
-      end
-
-      -- Create parent directories if they don't exist
-      local parent_dir = vim.fn.fnamemodify(file_path, ':h')
-      vim.fn.mkdir(parent_dir, 'p')
-
-      -- Create and open the file
-      vim.cmd('edit ' .. vim.fn.fnameescape(file_path))
-
-      -- Force LSP attachment for the new file
-      vim.schedule(function()
-        vim.cmd 'doautocmd BufRead'
-        -- Force Svelte LSP to attach to new .svelte files
-        if file_path:match '%.svelte$' then
-          vim.schedule(function()
-            local bufnr = vim.api.nvim_get_current_buf()
-            vim.lsp.start({
-              name = 'svelte',
-              cmd = { 'svelteserver', '--stdio' },
-              root_dir = vim.fs.dirname(vim.fs.find({ 'package.json', '.git' }, { upward = true })[1]),
-            }, { bufnr = bufnr })
-          end)
-        end
-      end)
-    end
-  end)
+  require('utils.file_management').new_file()
 end, { desc = 'New File' })
 
 vim.keymap.set('n', '<leader>nd', function()
-  local current_dir = vim.fn.expand '%:p:h'
-  if current_dir == '' then
-    current_dir = vim.fn.getcwd()
-  end
-
-  vim.ui.input({
-    prompt = 'New directory name: ',
-    default = current_dir .. '/',
-    completion = 'dir',
-  }, function(input)
-    if input then
-      local dir_path = input
-      -- If it's not an absolute path, make it relative to current file's directory
-      if not vim.startswith(dir_path, '/') then
-        dir_path = current_dir .. '/' .. dir_path
-      end
-
-      -- Create the directory
-      local success = vim.fn.mkdir(dir_path, 'p')
-      if success == 1 then
-        print('Created directory: ' .. dir_path)
-      else
-        print('Failed to create directory: ' .. dir_path)
-      end
-    end
-  end)
+  require('utils.file_management').new_directory()
 end, { desc = 'New Directory' })
 
 -- Super+\ to type ampersand
