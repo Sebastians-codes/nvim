@@ -44,12 +44,22 @@ vim.opt.shortmess = 'filnxtToOFWIcC' -- Suppress most messages including save in
 -- Create command abbreviation to make :w silent
 vim.cmd [[cnoreabbrev w silent w]]
 
--- Set indentation for specific filetypes
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'html', 'css', 'svelte', 'c', 'rs' },
-  callback = function()
-    vim.opt_local.tabstop = 2
-    vim.opt_local.shiftwidth = 2
-    vim.opt_local.expandtab = true
-  end,
-})
+ -- Set indentation for specific filetypes
+ vim.api.nvim_create_autocmd('FileType', {
+   pattern = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'html', 'css', 'svelte', 'c', 'rs' },
+   callback = function()
+     vim.opt_local.tabstop = 2
+     vim.opt_local.shiftwidth = 2
+     vim.opt_local.expandtab = true
+   end,
+ })
+
+ -- Set 4 spaces for C# files
+ vim.api.nvim_create_autocmd('FileType', {
+   pattern = 'cs',
+   callback = function()
+     vim.opt_local.tabstop = 4
+     vim.opt_local.shiftwidth = 4
+     vim.opt_local.expandtab = true
+   end,
+ })
