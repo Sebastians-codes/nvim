@@ -114,6 +114,8 @@ return {
         -- New file/directory keybinds
         { '<leader>nf', desc = 'New File' },
         { '<leader>nd', desc = 'New Directory' },
+        { '<leader>np', desc = 'New .NET Project' },
+        { '<leader>nr', desc = 'New .NET Reference' },
 
         -- Package.json management
         { '<leader>ps', desc = 'Show package versions' },
