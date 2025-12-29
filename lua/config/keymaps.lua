@@ -36,6 +36,60 @@ vim.keymap.set('n', 'tt', function()
   vim.cmd 'tabnew'
   vim.cmd 'terminal'
 end, { desc = 'New tab with terminal' })
+
+-- Floating terminal
+local floating_term_buf = nil
+local floating_term_win = nil
+
+local function toggle_floating_terminal()
+  -- If window exists and is valid, close it
+  if floating_term_win and vim.api.nvim_win_is_valid(floating_term_win) then
+    vim.api.nvim_win_close(floating_term_win, true)
+    floating_term_win = nil
+    return
+  end
+
+  -- If buffer doesn't exist or is invalid, create new terminal
+  if not floating_term_buf or not vim.api.nvim_buf_is_valid(floating_term_buf) then
+    floating_term_buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_call(floating_term_buf, function()
+      vim.fn.termopen(vim.o.shell)
+    end)
+  end
+
+  -- Calculate window size (80% of screen)
+  local width = math.floor(vim.o.columns * 0.8)
+  local height = math.floor(vim.o.lines * 0.8)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  -- Create floating window
+  floating_term_win = vim.api.nvim_open_win(floating_term_buf, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'rounded',
+  })
+
+  -- Set window options
+  vim.wo[floating_term_win].winblend = 0
+
+  -- Enter insert mode automatically
+  vim.cmd 'startinsert'
+
+  -- Set up keymaps for the terminal buffer
+  vim.keymap.set('t', '<C-x>', function()
+    if floating_term_win and vim.api.nvim_win_is_valid(floating_term_win) then
+      vim.api.nvim_win_close(floating_term_win, true)
+      floating_term_win = nil
+    end
+  end, { buffer = floating_term_buf, desc = 'Close floating terminal' })
+end
+
+vim.keymap.set('n', 'tf', toggle_floating_terminal, { desc = 'Toggle floating terminal' })
 for i = 1, 9 do
   local idx = i
   vim.keymap.set('n', 't' .. idx, function()
@@ -98,12 +152,8 @@ end, { desc = 'LSP Hover with border' })
 
 -- New file and directory creation
 vim.keymap.set('n', '<leader>nf', function()
-  require('utils.file_management').new_file()
-end, { desc = 'New File' })
-
-vim.keymap.set('n', '<leader>nd', function()
-  require('utils.file_management').new_directory()
-end, { desc = 'New Directory' })
+  require('utils.file_management').new_dotnet_file()
+end, { desc = 'New .NET File' })
 
 -- Super+\ to type ampersand
 vim.keymap.set({ 'n', 'i', 'v' }, '<D-\\>', '&', { desc = 'Type ampersand' })

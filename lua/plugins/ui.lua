@@ -112,8 +112,7 @@ return {
         { '<leader>tD', desc = 'Toggle git show deleted' },
 
         -- New file/directory keybinds
-        { '<leader>nf', desc = 'New File' },
-        { '<leader>nd', desc = 'New Directory' },
+        { '<leader>nf', desc = 'New .NET File' },
         { '<leader>np', desc = 'New .NET Project' },
         { '<leader>nr', desc = 'New .NET Reference' },
 
@@ -134,6 +133,9 @@ return {
         { '<F3>', desc = 'Debug: Step Out' },
         { '<F5>', desc = 'Debug: Start/Continue' },
         { '<F7>', desc = 'Debug: See last session result' },
+
+        -- Terminal keybinds
+        { 'tf', desc = 'Toggle floating terminal' },
 
         -- Other important keybinds
         { '\\', desc = 'NeoTree reveal' },

@@ -128,4 +128,210 @@ function M.new_directory()
   end)
 end
 
+-- .NET file templates
+local dotnet_templates = {
+  { name = 'Class', template = 'class', icon = '📦' },
+  { name = 'Interface', template = 'interface', icon = '🔌' },
+  { name = 'Record', template = 'record', icon = '📋' },
+  { name = 'Enum', template = 'enum', icon = '🔢' },
+  { name = 'Blank C# File', template = 'blank', icon = '📄' },
+}
+
+local function get_namespace_from_path(file_path)
+  -- Try to find the .csproj file to get root namespace
+  local dir = vim.fn.fnamemodify(file_path, ':h')
+  local csproj_files = vim.fn.glob(dir .. '/*.csproj', true, true)
+  
+  -- Search up the directory tree
+  local project_dir = dir
+  while #csproj_files == 0 and project_dir ~= '/' do
+    project_dir = vim.fn.fnamemodify(project_dir, ':h')
+    csproj_files = vim.fn.glob(project_dir .. '/*.csproj', true, true)
+  end
+  
+  if #csproj_files > 0 then
+    -- Get the project name from .csproj
+    local project_name = vim.fn.fnamemodify(csproj_files[1], ':t:r')
+    local file_dir = vim.fn.fnamemodify(file_path, ':h')
+    
+    -- Get relative path from project directory to file directory
+    local relative_path = vim.fn.fnamemodify(file_dir, ':s?' .. vim.pesc(project_dir) .. '??')
+    
+    -- Remove leading slash if present
+    relative_path = relative_path:gsub('^/', '')
+    
+    -- Build namespace from project name and folder structure
+    if relative_path ~= '' and relative_path ~= '.' then
+      local parts = vim.split(relative_path, '/')
+      local namespace_parts = { project_name }
+      for _, part in ipairs(parts) do
+        if part ~= '.' and part ~= '' and part ~= project_name then
+          table.insert(namespace_parts, part)
+        end
+      end
+      return table.concat(namespace_parts, '.')
+    else
+      return project_name
+    end
+  end
+  
+  return 'MyNamespace'
+end
+
+local function generate_dotnet_content(template_type, class_name, namespace)
+  if template_type == 'class' then
+    return string.format(
+      [[namespace %s;
+
+public class %s
+{
+    
+}
+]],
+      namespace,
+      class_name
+    )
+  elseif template_type == 'interface' then
+    return string.format(
+      [[namespace %s;
+
+public interface %s
+{
+    
+}
+]],
+      namespace,
+      class_name
+    )
+  elseif template_type == 'record' then
+    return string.format(
+      [[namespace %s;
+
+public record %s
+{
+    
+}
+]],
+      namespace,
+      class_name
+    )
+  elseif template_type == 'enum' then
+    return string.format(
+      [[namespace %s;
+
+public enum %s
+{
+    
+}
+]],
+      namespace,
+      class_name
+    )
+  elseif template_type == 'blank' then
+    return ''
+  end
+end
+
+function M.new_dotnet_file()
+  -- Determine the target directory
+  local current_dir
+  
+  -- Check if we're in oil.nvim
+  if vim.bo.filetype == 'oil' then
+    local ok, oil = pcall(require, 'oil')
+    if ok then
+      current_dir = oil.get_current_dir()
+    end
+  end
+  
+  -- Fall back to current file's directory or cwd
+  if not current_dir then
+    current_dir = vim.fn.expand '%:p:h'
+    if current_dir == '' then
+      current_dir = vim.fn.getcwd()
+    end
+  end
+  
+  -- Show template picker
+  local pickers = require 'telescope.pickers'
+  local finders = require 'telescope.finders'
+  local conf = require('telescope.config').values
+  local actions = require 'telescope.actions'
+  local action_state = require 'telescope.actions.state'
+  
+  pickers
+    .new(require('telescope.themes').get_dropdown(), {
+      prompt_title = 'Select .NET File Type',
+      finder = finders.new_table {
+        results = dotnet_templates,
+        entry_maker = function(entry)
+          return {
+            value = entry,
+            display = entry.icon .. ' ' .. entry.name,
+            ordinal = entry.name,
+          }
+        end,
+      },
+      sorter = conf.generic_sorter {},
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          if selection then
+            M.create_dotnet_file(selection.value, current_dir)
+          end
+        end)
+        return true
+      end,
+    })
+    :find()
+end
+
+function M.create_dotnet_file(template, target_dir)
+  telescope_input('File Name (without .cs)', '', function(input)
+    if not input or input == '' then
+      return
+    end
+    
+    -- Remove .cs if user added it
+    local class_name = input:gsub('%.cs$', '')
+    local file_path = target_dir .. '/' .. class_name .. '.cs'
+    
+    -- Check if file already exists
+    if vim.fn.filereadable(file_path) == 1 then
+      vim.notify('File already exists: ' .. file_path, vim.log.levels.ERROR)
+      return
+    end
+    
+    -- Generate content
+    local namespace = get_namespace_from_path(file_path)
+    local content = generate_dotnet_content(template.template, class_name, namespace)
+    
+    -- Create parent directories if needed
+    local parent_dir = vim.fn.fnamemodify(file_path, ':h')
+    vim.fn.mkdir(parent_dir, 'p')
+    
+    -- Write file
+    local file = io.open(file_path, 'w')
+    if file then
+      file:write(content)
+      file:close()
+      
+      -- Open the file
+      vim.cmd('edit ' .. vim.fn.fnameescape(file_path))
+      
+      -- Position cursor inside the type body
+      if template.template ~= 'blank' then
+        vim.cmd 'normal! G'
+        vim.cmd 'normal! k'
+        vim.cmd 'startinsert!'
+      end
+      
+      vim.notify('Created ' .. template.name .. ': ' .. class_name .. '.cs', vim.log.levels.INFO)
+    else
+      vim.notify('Failed to create file: ' .. file_path, vim.log.levels.ERROR)
+    end
+  end)
+end
+
 return M
