@@ -1,10 +1,8 @@
 -- Treesitter for syntax highlighting
 return {
   'nvim-treesitter/nvim-treesitter',
-  build = ':TSUpdate',
-  main = 'nvim-treesitter.configs',
-  opts = {
-    ensure_installed = {
+  build = function()
+    local parsers = {
       'bash',
       'c',
       'c_sharp',
@@ -22,13 +20,8 @@ return {
       'svelte',
       'vim',
       'vimdoc',
-    },
-    auto_install = true,
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = { 'ruby' },
-    },
-    indent = { enable = true, disable = { 'ruby' } },
-  },
+    }
+    vim.cmd('TSUpdate ' .. table.concat(parsers, ' '))
+  end,
 }
 

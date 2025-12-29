@@ -89,15 +89,15 @@ return {
           map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
           map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
           map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-          
+
           -- Rename with Telescope UI
           vim.keymap.set('n', '<leader>rn', function()
             require('utils.rename').rename()
           end, { buffer = event.buf, desc = 'LSP: [R]e[n]ame' })
-          
+
           -- Code actions for normal and visual mode
           vim.keymap.set({ 'n', 'x' }, '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf, desc = 'LSP: [C]ode [A]ction' })
-          
+
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           local client = vim.lsp.get_client_by_id(event.data.client_id)
@@ -191,19 +191,12 @@ return {
       }
 
       local ensure_installed = {
-        'clangd',
-        'codespell',
         'csharpier',
         'lua-language-server',
-        'markdownlint',
-        'ols',
         'prettier',
         'roslyn',
         'rust-analyzer',
         'rzls',
-        'stylua',
-        'svelte-language-server',
-        'tailwindcss-language-server',
       }
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
