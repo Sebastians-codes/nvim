@@ -11,7 +11,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 -- Set indentation for specific languages
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'c', 'cs', 'go', 'rust' },
+  pattern = { 'c', 'go', 'rust' },
   callback = function()
     vim.opt_local.expandtab = true
     vim.opt_local.shiftwidth = 2
