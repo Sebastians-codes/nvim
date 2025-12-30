@@ -138,13 +138,19 @@ local dotnet_templates = {
 }
 
 local function get_namespace_from_path(file_path)
+  -- Normalize path separators to forward slashes for consistent handling
+  file_path = file_path:gsub('\\', '/')
+  
   -- Try to find the .csproj file to get root namespace
   local dir = vim.fn.fnamemodify(file_path, ':h')
   local csproj_files = vim.fn.glob(dir .. '/*.csproj', true, true)
   
+  -- Determine root directory based on OS
+  local root_dir = vim.fn.has('win32') == 1 and '[A-Za-z]:/$' or '^/$'
+  
   -- Search up the directory tree
   local project_dir = dir
-  while #csproj_files == 0 and project_dir ~= '/' do
+  while #csproj_files == 0 and not project_dir:match(root_dir) do
     project_dir = vim.fn.fnamemodify(project_dir, ':h')
     csproj_files = vim.fn.glob(project_dir .. '/*.csproj', true, true)
   end
@@ -154,8 +160,15 @@ local function get_namespace_from_path(file_path)
     local project_name = vim.fn.fnamemodify(csproj_files[1], ':t:r')
     local file_dir = vim.fn.fnamemodify(file_path, ':h')
     
+    -- Normalize project_dir to forward slashes
+    project_dir = project_dir:gsub('\\', '/')
+    file_dir = file_dir:gsub('\\', '/')
+    
     -- Get relative path from project directory to file directory
-    local relative_path = vim.fn.fnamemodify(file_dir, ':s?' .. vim.pesc(project_dir) .. '??')
+    local relative_path = file_dir
+    if file_dir:sub(1, #project_dir) == project_dir then
+      relative_path = file_dir:sub(#project_dir + 1)
+    end
     
     -- Remove leading slash if present
     relative_path = relative_path:gsub('^/', '')
