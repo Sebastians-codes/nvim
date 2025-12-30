@@ -150,11 +150,6 @@ vim.keymap.set('n', 'K', function()
   }
 end, { desc = 'LSP Hover with border' })
 
--- New file and directory creation
-vim.keymap.set('n', '<leader>nf', function()
-  require('utils.file_management').new_dotnet_file()
-end, { desc = 'New .NET File' })
-
 -- Super+\ to type ampersand
 vim.keymap.set({ 'n', 'i', 'v' }, '<D-\\>', '&', { desc = 'Type ampersand' })
 
