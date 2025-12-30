@@ -43,6 +43,10 @@ return {
         return original_make_position_params(win, offset_encoding)
       end
 
+      -- Link extension methods to regular method highlighting
+      vim.api.nvim_set_hl(0, '@lsp.type.extensionMethod', { link = '@lsp.type.method' })
+      vim.api.nvim_set_hl(0, '@lsp.typemod.method.static', { link = '@lsp.type.method' })
+
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
@@ -97,6 +101,7 @@ return {
 
           -- Code actions for normal and visual mode
           vim.keymap.set({ 'n', 'x' }, '<leader>ca', vim.lsp.buf.code_action, { buffer = event.buf, desc = 'LSP: [C]ode [A]ction' })
+          vim.keymap.set({ 'n', 'x' }, '<C-Space>', vim.lsp.buf.code_action, { buffer = event.buf, desc = 'LSP: [C]ode [A]ction' })
 
           map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 

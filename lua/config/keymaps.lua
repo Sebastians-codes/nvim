@@ -17,6 +17,11 @@ vim.keymap.set('n', '<leader>qe', function()
     border = 'single',
   }
 end, { desc = 'Show diagnostic [E]rror' })
+vim.keymap.set('n', '<S-q>', function()
+  vim.diagnostic.open_float {
+    border = 'single',
+  }
+end, { desc = 'Show diagnostic [E]rror' })
 vim.keymap.set('n', '<leader>qa', '<cmd>Telescope diagnostics<cr>', { desc = 'All diagnostics' })
 vim.keymap.set('n', '<leader>qr', function()
   require('config.project-diagnostics').run_project_check()

@@ -551,6 +551,45 @@ return {
         :find()
     end
 
+    -- Get installed .NET SDK versions
+    function M.get_installed_frameworks()
+      local handle = io.popen 'dotnet --list-sdks 2>/dev/null'
+      if not handle then
+        return { 'net8.0' } -- fallback
+      end
+
+      local result = handle:read '*a'
+      handle:close()
+
+      if result == '' then
+        return { 'net8.0' } -- fallback
+      end
+
+      local frameworks = {}
+      local seen = {}
+
+      -- Parse SDK versions like "8.0.100 [/path]" and extract major.minor
+      for line in result:gmatch '[^\r\n]+' do
+        local version = line:match '^(%d+%.%d+)%.%d+'
+        if version and not seen[version] then
+          seen[version] = true
+          table.insert(frameworks, 'net' .. version)
+        end
+      end
+
+      -- Sort frameworks in descending order (newest first)
+      table.sort(frameworks, function(a, b)
+        local a_major, a_minor = a:match 'net(%d+)%.(%d+)'
+        local b_major, b_minor = b:match 'net(%d+)%.(%d+)'
+        if a_major == b_major then
+          return tonumber(a_minor) > tonumber(b_minor)
+        end
+        return tonumber(a_major) > tonumber(b_major)
+      end)
+
+      return #frameworks > 0 and frameworks or { 'net8.0' }
+    end
+
     function M.create_project(template)
       vim.ui.input({
         prompt = 'Project name: ',
@@ -569,15 +608,33 @@ return {
             location = vim.fn.getcwd()
           end
 
-          local template_id = template.shortName or template.templateId
-          local cmd = { 'dotnet', 'new', template_id, '-n', project_name, '-o', location .. '/' .. project_name }
+          -- Framework selection from installed SDKs
+          local framework_versions = M.get_installed_frameworks()
+          vim.ui.select(framework_versions, {
+            prompt = 'Select .NET Framework Version:',
+            format_item = function(item)
+              return item
+            end,
+          }, function(framework)
+            if not framework then
+              return
+            end
 
-          vim.fn.jobstart(cmd, {
-            on_exit = function(job_id, exit_code, event_type)
+            -- Check if this is a web API template
+            local template_id = template.shortName or template.templateId
+            local is_web_api = template_id == 'webapi' or template.name:lower():match('api')
+
+            local function execute_dotnet_new(use_controllers)
+              local cmd = { 'dotnet', 'new', template_id, '-n', project_name, '-o', location .. '/' .. project_name, '-f', framework }
+
+              -- Add controllers flag for web API (minimal is default)
+              if is_web_api and use_controllers then
+                table.insert(cmd, '--use-controllers')
+              end
+
+              vim.fn.jobstart(cmd, {
+                on_exit = function(job_id, exit_code, event_type)
               if exit_code == 0 then
-                vim.notify('Successfully created project "' .. project_name .. '" using ' .. template.name, vim.log.levels.INFO)
-                vim.notify('Location: ' .. location .. '/' .. project_name, vim.log.levels.INFO)
-
                 -- Check for .sln or .slnx file in the location directory
                 local sln_files = vim.fn.glob(location .. '/*.sln', true, true)
                 local slnx_files = vim.fn.glob(location .. '/*.slnx', true, true)
@@ -595,15 +652,9 @@ return {
                   local sln_path = solution_files[1]
                   local csproj_path = location .. '/' .. project_name .. '/' .. project_name .. '.csproj'
 
-                  -- Add project to solution
+                  -- Add project to solution silently
                   vim.fn.jobstart({ 'dotnet', 'sln', sln_path, 'add', csproj_path }, {
-                    on_exit = function(sln_job_id, sln_exit_code, sln_event_type)
-                      if sln_exit_code == 0 then
-                        vim.notify('Added project to solution: ' .. vim.fn.fnamemodify(sln_path, ':t'), vim.log.levels.INFO)
-                      else
-                        vim.notify('Failed to add project to solution', vim.log.levels.WARN)
-                      end
-                    end,
+                    on_exit = function() end,
                   })
                 end
 
@@ -614,31 +665,34 @@ return {
                     local project_path = location .. '/' .. project_name
                     vim.fn.chdir(project_path)
                     vim.cmd('edit ' .. project_path .. '/' .. project_name .. '.csproj')
+                    
+                    -- Restart LSP clients to detect the new project
+                    vim.schedule(function()
+                      vim.cmd('LspRestart')
+                    end)
                   end
                 end)
               else
                 vim.notify('Failed to create project. Exit code: ' .. exit_code, vim.log.levels.ERROR)
               end
             end,
-            on_stdout = function(job_id, data, event_type)
-              if data and #data > 0 then
-                for _, line in ipairs(data) do
-                  if line ~= '' then
-                    vim.notify(line, vim.log.levels.INFO)
-                  end
+              })
+            end
+
+            -- If it's a web API template, ask about controllers vs minimal
+            if is_web_api then
+              vim.ui.select({ 'Minimal API', 'Controllers' }, {
+                prompt = 'Select API Style:',
+              }, function(choice)
+                if not choice then
+                  return
                 end
-              end
-            end,
-            on_stderr = function(job_id, data, event_type)
-              if data and #data > 0 then
-                for _, line in ipairs(data) do
-                  if line ~= '' then
-                    vim.notify(line, vim.log.levels.ERROR)
-                  end
-                end
-              end
-            end,
-          })
+                execute_dotnet_new(choice == 'Controllers')
+              end)
+            else
+              execute_dotnet_new(false)
+            end
+          end)
         end)
       end)
     end
