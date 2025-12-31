@@ -4,20 +4,7 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       local lint = require 'lint'
-      lint.linters.codespell.cmd = vim.fn.stdpath('data') .. '/mason/bin/codespell'
-      lint.linters_by_ft = {
-        markdown = { 'markdownlint', 'codespell' },
-        javascript = { 'codespell' },
-        typescript = { 'codespell' },
-        javascriptreact = { 'codespell' },
-        typescriptreact = { 'codespell' },
-        lua = { 'codespell' },
-        python = { 'codespell' },
-        html = { 'codespell' },
-        css = { 'codespell' },
-        json = { 'codespell' },
-        txt = { 'codespell' },
-      }
+      lint.linters_by_ft = {}
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
       -- instead set linters_by_ft like this:
@@ -61,12 +48,7 @@ return {
         end,
       })
 
-      -- Add keybinding for codespell fix
-      vim.keymap.set('n', '<leader>cf', function()
-        local mason_bin = vim.fn.stdpath('data') .. '/mason/bin/codespell'
-        vim.cmd('!' .. mason_bin .. ' --write-changes %')
-        vim.cmd 'edit!'
-      end, { desc = 'Fix spelling with codespell' })
+
     end,
   },
 }

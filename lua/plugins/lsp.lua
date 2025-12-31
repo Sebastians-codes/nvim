@@ -46,6 +46,12 @@ return {
       -- Link extension methods to regular method highlighting
       vim.api.nvim_set_hl(0, '@lsp.type.extensionMethod', { link = '@lsp.type.method' })
       vim.api.nvim_set_hl(0, '@lsp.typemod.method.static', { link = '@lsp.type.method' })
+      
+      -- Link C# records to class highlighting (all possible variants from Roslyn)
+      vim.api.nvim_set_hl(0, '@lsp.type.record', { link = '@lsp.type.class' })
+      vim.api.nvim_set_hl(0, '@lsp.type.recordClass', { link = '@lsp.type.class' })
+      vim.api.nvim_set_hl(0, '@lsp.type.recordStruct', { link = '@lsp.type.class' })
+      vim.api.nvim_set_hl(0, '@lsp.typemod.class.record', { link = '@lsp.type.class' })
 
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),

@@ -37,29 +37,29 @@ vim.opt.laststatus = 2
 -- Hide builtin tabline (tab info is shown in statusline)
 vim.opt.showtabline = 0
 -- Give command line enough space to display messages
-vim.opt.cmdheight = 0
+vim.opt.cmdheight = 1
 -- Reduce message verbosity to avoid flashing
 vim.opt.shortmess = 'filnxtToOFWIcC' -- Suppress most messages including save info
 
 -- Create command abbreviation to make :w silent
 vim.cmd [[cnoreabbrev w silent w]]
 
- -- Set indentation for specific filetypes
- vim.api.nvim_create_autocmd('FileType', {
-   pattern = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'html', 'css', 'svelte', 'c', 'rs' },
-   callback = function()
-     vim.opt_local.tabstop = 2
-     vim.opt_local.shiftwidth = 2
-     vim.opt_local.expandtab = true
-   end,
- })
+-- Set indentation for specific filetypes
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'html', 'css', 'svelte', 'c', 'rs' },
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+  end,
+})
 
- -- Set 4 spaces for C# files
- vim.api.nvim_create_autocmd('FileType', {
-   pattern = 'cs',
-   callback = function()
-     vim.opt_local.tabstop = 4
-     vim.opt_local.shiftwidth = 4
-     vim.opt_local.expandtab = true
-   end,
- })
+-- Set 4 spaces for C# files
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'cs',
+  callback = function()
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.expandtab = true
+  end,
+})
